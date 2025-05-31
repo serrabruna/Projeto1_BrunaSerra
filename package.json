@@ -1,0 +1,30 @@
+{
+  "name": "projeto1_brunaserra",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "start": "node dist/app.js",
+    "build": "npx tsc",
+    "dev": "ts-node src/app.ts"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/serrabruna/Projeto1_BrunaSerra.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/serrabruna/Projeto1_BrunaSerra/issues"
+  },
+  "homepage": "https://github.com/serrabruna/Projeto1_BrunaSerra#readme",
+  "description": "",
+  "dependencies": {
+    "@types/express": "^5.0.2",
+    "@types/node": "^22.15.26",
+    "@types/typescript": "^0.4.29",
+    "express": "^5.1.0",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.8.3"
+  }
+}
