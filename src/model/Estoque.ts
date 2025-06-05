@@ -1,11 +1,15 @@
 export class Estoque{
-    codigo: string;
+    id: string;
     isbnLivro: string;
+    quantidade: number;
+    quantidadeEmprestada: number;
     status: 'disponivel' | 'emprestado';
 
-    constructor(codigo: string, isbnLivro: string){
-        this.codigo = codigo;
+    constructor(id: string, isbnLivro: string, quantidade: number, quantidadeEmprestada: number){
+        this.id = id;
         this.isbnLivro = isbnLivro;
+        this.quantidade = quantidade;
+        this.quantidadeEmprestada = quantidadeEmprestada;
         this.status = 'disponivel';
     }
 }
