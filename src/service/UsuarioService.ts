@@ -1,6 +1,6 @@
 import { Usuario } from "../model/Usuario";
 import { UsuarioRepository } from "../repository/UsuarioRepository";
-import { categoriaUsuarioValida } from "../model/CategoriaUsuario";
+import {  } from "../model/CategoriaUsuario";
 import { cursoValido } from "../model/Curso";
 
 export class UsuarioService{
@@ -28,6 +28,8 @@ export class UsuarioService{
         this.usuarioRepository.InserirUsuario(novoUsuario);
         return novoUsuario;
     }
+
+    
 
 
     

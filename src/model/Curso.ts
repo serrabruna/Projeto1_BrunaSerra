@@ -1,11 +1,10 @@
-export const cursos = [
-    "ADS",
-    "Pedagogia",
-    "Administração"
-] as const;
+export class Curso{
+    id: number;
+    nome: string;
 
-export type Curso = typeof cursos[number];
+    constructor(id:number, nome: string){
+        this.id = id;
+        this. nome = nome;
+    }
 
-export function cursoValido(curso: string): curso is Curso {
-    return (cursos as readonly string[]).includes(curso);
 }

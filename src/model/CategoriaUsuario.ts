@@ -1,11 +1,10 @@
-export const CategoriasUsuario = [
-    "Professor",
-    "Aluno",
-    "Bibliotecário"
-] as const;
+export class CategoriaUsuario{
+  id: number;
+  nome: string;
 
-export type CategoriaUsuario = typeof CategoriasUsuario[number];
+  constructor(id:number, nome: string){
+    this.id = id;
+    this. nome = nome;
+  }
 
-export function categoriaUsuarioValida(categoria: string): categoria is CategoriaUsuario {
-  return (CategoriasUsuario as readonly string[]).includes(categoria);
 }

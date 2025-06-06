@@ -3,8 +3,8 @@ import {Usuario} from "../model/Usuario"
 type DadosAtualizacaoUsuario = {
     nome?: string;
     email?: string;
-    categoria?: string;
-    curso?: string;
+    categoriaId?: number;
+    cursoId?: number;
     status?: 'ativo' | 'inativo' | 'suspenso';
     diaSuspensao?: number;
 }
@@ -44,11 +44,11 @@ export class UsuarioRepository{
         if(novosDados.email){
             usuario.email = novosDados.email;
         }
-        if(novosDados.categoria){
-            usuario.categoria = novosDados.categoria;
+        if(novosDados.categoriaId){
+            usuario.categoriaId = novosDados.categoriaId;
         }
-        if(novosDados.curso){
-            usuario.curso = novosDados.curso;
+        if(novosDados.cursoId){
+            usuario.cursoId = novosDados.cursoId;
         }
         if(novosDados.status){
             usuario.status = novosDados.status;

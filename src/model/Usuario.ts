@@ -1,22 +1,26 @@
 export class Usuario{
+    static proximoId: number = 0;
+
+    id: number;
     cpf: string;
     nome: string;
     email: string;
-    categoria: string;
-    curso: string;
+    categoriaId: number;
+    cursoId: number;
     status: 'ativo' | 'inativo' | 'suspenso';
     diaSuspensao: number;
     
-    constructor(cpf: string, nome: string, email: string, categoria: string, curso: string){
+    constructor(id: number, cpf: string, nome: string, email: string, categoriaId: number, cursoId: number){
         if(!Usuario.validarCPF(cpf)){
             throw new Error("CPF inválido!");
         }
         
+        this.id = Usuario.proximoId++;
         this.cpf = cpf;
         this.nome = nome;
         this.email = nome;
-        this.categoria = categoria;
-        this.curso = curso;
+        this.categoriaId = categoriaId;
+        this.cursoId = cursoId;
         this.status = 'ativo';
         this.diaSuspensao = 0;
     };
