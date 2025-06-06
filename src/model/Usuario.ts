@@ -24,7 +24,7 @@ export class Usuario{
     static verificarSequenciaRepetida(cpf:string): boolean {
         const primeiroDigito = cpf[0];
         for(let i = 0; i < cpf.length; i++){
-            if(cpf[i] == primeiroDigito) return false;
+            if(cpf[i] !== primeiroDigito) return false;
         }
         return true;
         
