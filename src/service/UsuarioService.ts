@@ -1,5 +1,8 @@
 import { Usuario } from "../model/Usuario";
 import { UsuarioRepository } from "../repository/UsuarioRepository";
+import { CategoriaUsuario } from "../model/CategoriaUsuario";
+import { Curso } from "../model/Curso";
+
 export class UsuarioService{
     usuarioRepository: UsuarioRepository = UsuarioRepository.getInstance();
 
@@ -12,4 +15,7 @@ export class UsuarioService{
         this.usuarioRepository.InserirUsuario(novoUsuario);
         return novoUsuario;
     }
+
+    
+    
 }
