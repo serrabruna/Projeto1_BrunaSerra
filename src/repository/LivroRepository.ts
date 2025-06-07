@@ -29,6 +29,11 @@ export class LivroRepository {
         return this.livros.find((livro) => livro.isbn === isbn);
     }
 
+    buscarLivroPorAutorEditoraEdicao(autor: string, editora: string, edicao: string): Livro | undefined{
+        return this.livros.find(livro => livro.autor.toLowerCase() === autor.toLowerCase()
+        && livro.editora.toLowerCase() === editora.toLowerCase() && livro.edicao === edicao);
+    }
+
     listarLivros(): Livro[] {
         return this.livros;
     }
