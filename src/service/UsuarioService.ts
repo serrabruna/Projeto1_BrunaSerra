@@ -17,7 +17,7 @@ export class UsuarioService{
 
     cadastrarUsuario(usuarioData: any): Usuario {
         const {cpf, nome, email, categoriaId, cursoId} = usuarioData;
-        if(!cpf || nome || email || categoriaId || cursoId){
+        if(!cpf || !nome || !email || !categoriaId){
             throw new Error("Informações incompletas");
         }
         if(!Usuario.validarCPF(cpf)){
@@ -28,10 +28,22 @@ export class UsuarioService{
         }
         
         const categoria = this.categoriaService.buscarPorId(categoriaId);
-        const curso = this.cursoService.buscarPorId(cursoId);
-        
+        if (!categoria) {
+            throw new Error("Categoria inválida!");
+        }
+        if (categoriaId !== 3) {
+            if (cursoId === undefined) {
+                throw new Error("Curso é obrigatório para alunos e professores.");
+            }
+            const curso = this.cursoService.buscarPorId(cursoId);
+            if (!curso) {
+                throw new Error("Curso inválido!");
+            }
+        }
 
-        const novoUsuario = new Usuario(cpf, nome, email, categoriaId, cursoId);
+        const cursoFinal = categoriaId === 3 ? 0 : cursoId;
+
+        const novoUsuario = new Usuario(cpf, nome, email, categoriaId, cursoFinal);
         this.usuarioRepository.InserirUsuario(novoUsuario);
         return novoUsuario;
     }
@@ -62,4 +74,37 @@ export class UsuarioService{
 
         return usuario;
     }
+
+    atualizarUsuario(cpf: string, novosDados: DadosAtualizacaoUsuario): Usuario{
+        const usuario = this.usuarioRepository.buscarUsuarioPorCPF(cpf);
+        if(!usuario){
+            throw new Error("Usuário não encontrado!");
+        }
+
+        if (!novosDados.nome && !novosDados.email && !novosDados.categoriaId && !novosDados.cursoId) {
+            throw new Error("Nenhum dado informado para atualização.");
+        }
+
+        if(novosDados.categoriaId){
+            const categoria = this.categoriaService.buscarPorId(novosDados.categoriaId);
+            if(!categoria){
+                throw new Error("Categoria Inválida!");
+            }
+        }
+
+        if(novosDados.cursoId){
+            const curso = this.cursoService.buscarPorId(novosDados.cursoId);
+            if(!curso){
+                throw new Error("Curso Inválido!");
+            }
+        }
+        
+        const usuarioAtualizado = this.usuarioRepository.atualizarDadosUsuario(cpf, novosDados);
+        if(!usuarioAtualizado){
+            throw new Error("Erro inesperado ao atualizar usuário!");
+        }
+        return usuarioAtualizado;
+    }
+
+    /*remover usuário = implementar após a implementação de empréstimo*/
 }

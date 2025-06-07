@@ -15,7 +15,7 @@ class EstoqueRepository {
         this.exemplares.push(exemplar);
     }
     buscarPorCodigo(codigo) {
-        return this.exemplares.find(exemplar => exemplar.codigo === codigo);
+        return this.exemplares.find(exemplar => exemplar.isbnLivro === codigo);
     }
     listarEstoque() {
         return this.exemplares;

@@ -18,7 +18,7 @@ export class Usuario{
         this.id = Usuario.proximoId++;
         this.cpf = cpf;
         this.nome = nome;
-        this.email = nome;
+        this.email = email;
         this.categoriaId = categoriaId;
         this.cursoId = cursoId;
         this.status = 'ativo';

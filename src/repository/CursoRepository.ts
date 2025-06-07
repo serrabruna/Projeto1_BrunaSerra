@@ -3,6 +3,7 @@ import { Curso } from "../model/Curso";
 export class CursoRepository{
     private static instance: CursoRepository;
     private cursos: Curso[] = [
+        new Curso(0, "Não se Aplica"),
         new Curso(1, "ADS"),
         new Curso(2, "Pedagogia"),
         new Curso(3, "Administração")

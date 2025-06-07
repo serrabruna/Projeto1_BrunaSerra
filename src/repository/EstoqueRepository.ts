@@ -18,7 +18,7 @@ export class EstoqueRepository{
     }
 
     buscarPorCodigo(codigo:string): Estoque | undefined{
-        return this.exemplares.find(exemplar => exemplar.codigo === codigo);
+        return this.exemplares.find(exemplar => exemplar.isbnLivro === codigo);
     }
 
     listarEstoque(): Estoque[]{
