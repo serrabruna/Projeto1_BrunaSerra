@@ -1,27 +1,27 @@
-import {Livro} from "../model/Livro"
+import { Livro } from "../model/Livro";
 
-export class LivroRepository{
+export class LivroRepository {
     private static instance: LivroRepository;
     private livros: Livro[] = [];
 
-    private constructor(){}
+    private constructor() {}
 
-    public static getInstance(): LivroRepository{
-        if(!this.instance) {
+    public static getInstance(): LivroRepository {
+        if (!this.instance) {
             this.instance = new LivroRepository();
         }
         return this.instance;
     }
 
-    InserirLivro(livro: Livro){
+    inserirLivro(livro: Livro) {
         this.livros.push(livro);
     }
 
-    buscarLivroPorISBN(isbn:string): Livro | undefined{
-        return this.livros.find(livro => livro.isbn === isbn);
+    buscarLivroPorISBN(isbn: string): Livro | undefined {
+        return this.livros.find((livro) => livro.isbn === isbn);
     }
 
-    listarLivros(): Livro[]{
+    listarLivros(): Livro[] {
         return this.livros;
     }
 }

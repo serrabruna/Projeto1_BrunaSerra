@@ -1,16 +1,27 @@
 import express from "express";
 import { UsuarioController } from './controller/UsuarioController';
+import { CategoriaUsuarioController } from "./controller/CategoriaUsuarioController";
+import { CursoController } from "./controller/CursoController";
 
 const usuarioController = new UsuarioController();
+const catUsuController = new CategoriaUsuarioController();
+const cursoController = new CursoController();
 
 const app = express();
 
 const PORT = process.env.PORT ?? 3090;
 app.use(express.json());
 
+//Usuário
 app.post("/library/usuarios", usuarioController.criarUsuario.bind(usuarioController));
 app.get("/library/usuarios", usuarioController.listarUsuario.bind(usuarioController));
 app.get("/library/usuarios/:cpf", usuarioController.buscarUsuario.bind(usuarioController));
 app.put("/library/usuarios/:cpf", usuarioController.atualizarUsuario.bind(usuarioController));
 
-app.listen(PORT, () => console.log("Servidor rodando em http://localhost:3090/library"));
+//Categoria Usuário
+app.get("/library/categorias-usuario", catUsuController.listarCategorias.bind(catUsuController));
+
+//Curso
+app.get("/library/cursos", cursoController.listarCursos.bind(cursoController));
+
+app.listen(PORT, () => console.log("Servidor rodando em http://localhost:3090"));

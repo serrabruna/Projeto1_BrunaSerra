@@ -5,10 +5,6 @@ const UsuarioService_1 = require("../service/UsuarioService");
 class UsuarioController {
     usuarioService = new UsuarioService_1.UsuarioService();
     criarUsuario(req, res) {
-        if (!req.body || Object.keys(req.body).length === 0) {
-            res.status(400).json({ message: "Corpo da requisição está vazio ou malformado" });
-            return;
-        }
         try {
             const usuario = this.usuarioService.cadastrarUsuario(req.body);
             res.status(201).json(usuario);

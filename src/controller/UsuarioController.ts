@@ -5,10 +5,6 @@ export class UsuarioController{
     private usuarioService = new UsuarioService();
 
     criarUsuario(req: Request, res: Response): void{
-        if (!req.body || Object.keys(req.body).length === 0) {
-            res.status(400).json({ message: "Corpo da requisição está vazio ou malformado" });
-            return;
-        }
         try{
             const usuario = this.usuarioService.cadastrarUsuario(req.body);
             res.status(201).json(usuario);
