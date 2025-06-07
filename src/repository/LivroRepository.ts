@@ -1,5 +1,12 @@
 import { Livro } from "../model/Livro";
 
+type DadosAtualizacaoUsuario = {
+    nome?: string;
+    email?: string;
+    categoriaId?: number;
+    cursoId?: number;
+}
+
 export class LivroRepository {
     private static instance: LivroRepository;
     private livros: Livro[] = [];
