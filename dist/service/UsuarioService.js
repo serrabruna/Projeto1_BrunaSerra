@@ -67,6 +67,9 @@ class UsuarioService {
         if (!novosDados.nome && !novosDados.email && !novosDados.categoriaId && !novosDados.cursoId) {
             throw new Error("Nenhum dado informado para atualização.");
         }
+        if (novosDados.cpf && novosDados.cpf !== cpf) {
+            throw new Error("Não é permitido alterar o CPF!");
+        }
         if (novosDados.categoriaId) {
             const categoria = this.categoriaService.buscarPorId(novosDados.categoriaId);
             if (!categoria) {

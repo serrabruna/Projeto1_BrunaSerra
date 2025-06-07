@@ -4,6 +4,7 @@ import { CategoriaUsuarioService } from "./CategoriaUsuarioService";
 import { CursoService } from "./CursoService";
 
 type DadosAtualizacaoUsuario = {
+    cpf?: string;
     nome?: string;
     email?: string;
     categoriaId?: number;
@@ -83,6 +84,10 @@ export class UsuarioService{
 
         if (!novosDados.nome && !novosDados.email && !novosDados.categoriaId && !novosDados.cursoId) {
             throw new Error("Nenhum dado informado para atualização.");
+        }
+
+        if(novosDados.cpf && novosDados.cpf !== cpf){
+            throw new Error("Não é permitido alterar o CPF!");
         }
 
         if(novosDados.categoriaId){
