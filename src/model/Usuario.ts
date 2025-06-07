@@ -10,7 +10,7 @@ export class Usuario{
     status: 'ativo' | 'inativo' | 'suspenso';
     diaSuspensao: number;
     
-    constructor(id: number, cpf: string, nome: string, email: string, categoriaId: number, cursoId: number){
+    constructor(cpf: string, nome: string, email: string, categoriaId: number, cursoId: number){
         if(!Usuario.validarCPF(cpf)){
             throw new Error("CPF inválido!");
         }

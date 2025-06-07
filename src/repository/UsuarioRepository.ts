@@ -5,8 +5,6 @@ type DadosAtualizacaoUsuario = {
     email?: string;
     categoriaId?: number;
     cursoId?: number;
-    status?: 'ativo' | 'inativo' | 'suspenso';
-    diaSuspensao?: number;
 }
 
 export class UsuarioRepository{
@@ -50,12 +48,6 @@ export class UsuarioRepository{
         if(novosDados.cursoId){
             usuario.cursoId = novosDados.cursoId;
         }
-        if(novosDados.status){
-            usuario.status = novosDados.status;
-        }
-        if(novosDados.diaSuspensao !== undefined){
-            usuario.diaSuspensao = novosDados.diaSuspensao;
-        }
         return usuario;
     }
 
@@ -64,7 +56,7 @@ export class UsuarioRepository{
         if(index == -1){
             return false;
         }
-        this.usuarios.slice(index, 1);
+        this.usuarios.splice(index, 1);
         return true;
     }
 }
