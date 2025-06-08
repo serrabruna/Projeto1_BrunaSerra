@@ -4,7 +4,6 @@ import { UsuarioRepository } from "../repository/UsuarioRepository";
 import { EstoqueRepository } from "../repository/EstoqueRepository";
 import { CategoriaUsuarioRepository } from "../repository/CategoriaUsuarioRepository";
 import { LivroRepository } from "../repository/LivroRepository";
-import { UsuarioController } from "../controller/UsuarioController";
 import { UsuarioService } from "./UsuarioService";
 
 export class EmprestimoService{
@@ -64,9 +63,9 @@ export class EmprestimoService{
         return this.emprestimoRepository.listarEmprestimos();
     }
 
-    registrarDevolução(id: number): Emprestimo{
+    registrarDevolucao(id: number): Emprestimo{
         const emprestimo = this.emprestimoRepository.buscarEmprestimoPorId(id);
-        if (!emprestimo || !emprestimo.dataEntrega) {
+        if (!emprestimo || emprestimo.dataEntrega) {
             throw new Error("Empréstimo não encontrado ou já devolvido.");
         }
         const dataEntrega = new Date();
