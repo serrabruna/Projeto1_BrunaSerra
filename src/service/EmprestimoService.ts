@@ -4,6 +4,8 @@ import { UsuarioRepository } from "../repository/UsuarioRepository";
 import { EstoqueRepository } from "../repository/EstoqueRepository";
 import { CategoriaUsuarioRepository } from "../repository/CategoriaUsuarioRepository";
 import { LivroRepository } from "../repository/LivroRepository";
+import { UsuarioController } from "../controller/UsuarioController";
+import { UsuarioService } from "./UsuarioService";
 
 export class EmprestimoService{
     emprestimoRepository: EmprestimoRepository = EmprestimoRepository.getInstance();
@@ -11,6 +13,7 @@ export class EmprestimoService{
     estoqueRepository: EstoqueRepository = EstoqueRepository.getInstance();
     catUsuRepository: CategoriaUsuarioRepository = CategoriaUsuarioRepository.getInstance();
     livroRepository: LivroRepository = LivroRepository.getInstance();
+    usuarioService = new UsuarioService();
 
     registrarEmprestimo(cpfUsuario: string, codigoExemplar: number): Emprestimo{
         const usuario = this.usuarioRepository.buscarUsuarioPorCPF(cpfUsuario);
