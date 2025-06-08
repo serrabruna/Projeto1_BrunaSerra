@@ -1,6 +1,6 @@
 # 📚 Sistema de Biblioteca - IFSP
 
-Este projeto é um sistema de gerenciamento de biblioteca acadêmica desenvolvido em **Node.js com TypeScript**, seguindo as boas práticas de arquitetura MVC e regras de negócio definidas em laboratório.
+Este projeto é uma API para gestão de biblioteca acadêmica desenvolvido em **Node.js com TypeScript**, seguindo as boas práticas de arquitetura MVC e regras de negócio definidas em laboratório.
 
 ---
 
