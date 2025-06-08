@@ -38,6 +38,8 @@ app.post("/library/livros", livroController.criarLivro.bind(livroController));
 app.get("/library/livros", livroController.listarLivro.bind(livroController));
 app.get("/library/livros/:isbn", livroController.buscarLivro.bind(livroController));
 app.put("/library/livros/:isbn", livroController.atualizarLivro.bind(livroController));
+app.delete("/library/livros/:isbn", livroController.removerLivro.bind(livroController));
+
 
 //Categoria Livro
 app.get("/library/categoria-livro", categoriaLivroController.listarCategorias.bind(categoriaLivroController));
