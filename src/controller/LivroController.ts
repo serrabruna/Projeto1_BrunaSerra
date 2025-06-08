@@ -70,5 +70,20 @@ export class LivroController{
         }
     }
 
-    //remover livro após implementação de estoque e empréstimo
+    removerLivro(req: Request, res: Response): void{
+        const isbn = req.params.isbn;
+        try{
+            const livro = this.livroService.removerLivro(isbn);
+            res.status(204).send();
+        }
+        catch(error: unknown){
+            let message: string = "Não foi possível remover livro";
+            if(error instanceof Error){
+                message = error.message;
+            }
+            res.status(400).json({
+                message: message
+            });
+        }
+    }
 }

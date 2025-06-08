@@ -67,5 +67,21 @@ class LivroController {
             });
         }
     }
+    removerLivro(req, res) {
+        const isbn = req.params.isbn;
+        try {
+            const livro = this.livroService.removerLivro(isbn);
+            res.status(204).send();
+        }
+        catch (error) {
+            let message = "Não foi possível remover livro";
+            if (error instanceof Error) {
+                message = error.message;
+            }
+            res.status(400).json({
+                message: message
+            });
+        }
+    }
 }
 exports.LivroController = LivroController;

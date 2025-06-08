@@ -4,9 +4,13 @@ exports.LivroService = void 0;
 const Livro_1 = require("../model/Livro");
 const LivroRepository_1 = require("../repository/LivroRepository");
 const CategoriaLivroService_1 = require("./CategoriaLivroService");
+const EstoqueRepository_1 = require("../repository/EstoqueRepository");
+const EmprestimoRepository_1 = require("../repository/EmprestimoRepository");
 class LivroService {
     livroRepository = LivroRepository_1.LivroRepository.getInstance();
     categoriaService = new CategoriaLivroService_1.CategoriaLivroService();
+    estoqueRepository = EstoqueRepository_1.EstoqueRepository.getInstance();
+    emprestimoRepository = EmprestimoRepository_1.EmprestimoRepository.getInstance();
     AdicionarLivro(livroData) {
         const { isbn, titulo, autor, editora, edicao, categoriaId } = livroData;
         if (!titulo || !autor || !editora || !edicao || !isbn || !categoriaId) {
@@ -67,6 +71,25 @@ class LivroService {
             throw new Error("Erro inesperado ao atualizar livro!");
         }
         return livroAtualizado;
+    }
+    removerLivro(isbn) {
+        const livro = this.livroRepository.buscarLivroPorISBN(isbn);
+        if (!livro) {
+            throw new Error("Livro não encontrado.");
+        }
+        const exemplares = this.estoqueRepository.listarEstoque().filter(e => e.livro_isbn === isbn);
+        if (exemplares.length > 0) {
+            throw new Error("Não é possível remover o livro: existem exemplares vinculados no estoque.");
+        }
+        const emprestimos = this.emprestimoRepository.listarEmprestimos();
+        const emprestimosAtivos = emprestimos.filter(e => {
+            const exemplar = this.estoqueRepository.buscarPorCodigo(e.codigoExemplar);
+            return exemplar && exemplar.livro_isbn === isbn && !e.dataEntrega;
+        });
+        if (emprestimosAtivos.length > 0) {
+            throw new Error("Não é possível remover o livro: existem empréstimos ativos.");
+        }
+        this.livroRepository.removerLivro(isbn);
     }
 }
 exports.LivroService = LivroService;
