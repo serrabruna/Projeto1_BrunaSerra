@@ -5,6 +5,7 @@ import { CursoController } from "./controller/CursoController";
 import { LivroController } from "./controller/LivroController";
 import { CategoriaLivroController } from "./controller/CategoriaLivroController";
 import { EstoqueController } from "./controller/EstoqueController";
+import { EmprestimoController } from "./controller/EmprestimoController";
 
 const usuarioController = new UsuarioController();
 const catUsuController = new CategoriaUsuarioController();
@@ -12,6 +13,7 @@ const cursoController = new CursoController();
 const livroController = new LivroController();
 const categoriaLivroController = new CategoriaLivroController();
 const estoqueController = new EstoqueController();
+const emprestimoController = new EmprestimoController();
 
 const app = express();
 
@@ -46,5 +48,10 @@ app.get("/library/estoque", estoqueController.listarDisponivel.bind(estoqueContr
 app.get("/library/estoque/:codigo", estoqueController.buscarExemplar.bind(estoqueController));
 app.put("/library/estoque/:codigo", estoqueController.atualizarStatus.bind(estoqueController));
 app.delete("/library/estoque/:codigo", estoqueController.RemoverEstoque.bind(estoqueController));
+
+//Emprestimo 
+app.post("/library/emprestimos", emprestimoController.criarEmprestimo.bind(emprestimoController));
+app.get("/library/emprestimos", emprestimoController.listarEmprestimos.bind(emprestimoController));
+app.put("/library/emprestimos/:id/devolucao", emprestimoController.registrarDevolucao.bind(emprestimoController));
 
 app.listen(PORT, () => console.log("Servidor rodando em http://localhost:3090"));

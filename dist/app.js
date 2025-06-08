@@ -10,12 +10,14 @@ const CursoController_1 = require("./controller/CursoController");
 const LivroController_1 = require("./controller/LivroController");
 const CategoriaLivroController_1 = require("./controller/CategoriaLivroController");
 const EstoqueController_1 = require("./controller/EstoqueController");
+const EmprestimoController_1 = require("./controller/EmprestimoController");
 const usuarioController = new UsuarioController_1.UsuarioController();
 const catUsuController = new CategoriaUsuarioController_1.CategoriaUsuarioController();
 const cursoController = new CursoController_1.CursoController();
 const livroController = new LivroController_1.LivroController();
 const categoriaLivroController = new CategoriaLivroController_1.CategoriaLivroController();
 const estoqueController = new EstoqueController_1.EstoqueController();
+const emprestimoController = new EmprestimoController_1.EmprestimoController();
 const app = (0, express_1.default)();
 const PORT = process.env.PORT ?? 3090;
 app.use(express_1.default.json());
@@ -42,4 +44,8 @@ app.get("/library/estoque", estoqueController.listarDisponivel.bind(estoqueContr
 app.get("/library/estoque/:codigo", estoqueController.buscarExemplar.bind(estoqueController));
 app.put("/library/estoque/:codigo", estoqueController.atualizarStatus.bind(estoqueController));
 app.delete("/library/estoque/:codigo", estoqueController.RemoverEstoque.bind(estoqueController));
+//Emprestimo 
+app.post("/library/emprestimos", emprestimoController.criarEmprestimo.bind(emprestimoController));
+app.get("/library/emprestimos", emprestimoController.listarEmprestimos.bind(emprestimoController));
+app.put("/library/emprestimos/:id/devolucao", emprestimoController.registrarDevolucao.bind(emprestimoController));
 app.listen(PORT, () => console.log("Servidor rodando em http://localhost:3090"));

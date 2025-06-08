@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Emprestimo = void 0;
 class Emprestimo {
-    static proximoId = 0;
+    static proximoId = 1;
     id;
     cpfUsuario;
     codigoExemplar;
@@ -16,8 +16,6 @@ class Emprestimo {
         this.cpfUsuario = cpfUsuario;
         this.codigoExemplar = codigoExemplar;
         this.dataEmprestimo = new Date();
-        this.dataDevolucao = new Date();
-        this.dataEntrega = new Date();
     }
 }
 exports.Emprestimo = Emprestimo;

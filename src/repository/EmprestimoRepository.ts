@@ -27,8 +27,8 @@ export class EmprestimoRepository {
 
     registrarDevolucao(id: number, data: Date): boolean {
         const emprestimo = this.buscarEmprestimoPorId(id);
-        if (emprestimo && !emprestimo.dataDevolucao) {
-            emprestimo.dataDevolucao = data;
+        if (emprestimo && !emprestimo.dataEntrega) {
+            emprestimo.dataEntrega = data;
             return true;
     }
         return false;

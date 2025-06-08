@@ -19,7 +19,7 @@ export class EmprestimoService{
         if(!usuario){
             throw new Error("Usuário não encontrado!");
         }
-        if(usuario.status !== "ativo" && usuario.status !== "suspenso"){
+        if(usuario.status !== "ativo"){
             throw new Error("Usuário inativo.");
         }
         if(usuario.diaSuspensao && usuario.diaSuspensao > 0){
@@ -37,6 +37,10 @@ export class EmprestimoService{
         }
 
         const livro = this.livroRepository.buscarLivroPorISBN(exemplar.livro_isbn);
+        if (!livro) {
+            throw new Error("Livro associado ao exemplar não encontrado.");
+        }
+
         const emprestimosAtivos = this.emprestimoRepository.emprestimosAbertos(cpfUsuario);
         const limiteQtd = categoria.nome === "Professor" ? 5 : 3;
         const limiteDias = categoria.nome === "Aluno" && livro && 
@@ -51,9 +55,9 @@ export class EmprestimoService{
         dataDevolucao.setDate(dataEmprestimo.getDate() + limiteDias);
 
         const novoEmprestimo = new Emprestimo(cpfUsuario, codigoExemplar);
+        exemplar.status = "emprestado";
         novoEmprestimo.dataEmprestimo = dataEmprestimo;
         novoEmprestimo.dataDevolucao = dataDevolucao;
-        exemplar.status = "emprestado";
 
         this.emprestimoRepository.inserir(novoEmprestimo);
         return novoEmprestimo;
@@ -65,12 +69,16 @@ export class EmprestimoService{
 
     registrarDevolucao(id: number): Emprestimo{
         const emprestimo = this.emprestimoRepository.buscarEmprestimoPorId(id);
-        if (!emprestimo || emprestimo.dataEntrega) {
+        if (emprestimo === undefined|| emprestimo.dataEntrega) {
             throw new Error("Empréstimo não encontrado ou já devolvido.");
         }
         const dataEntrega = new Date();
         emprestimo.dataEntrega = dataEntrega;
         let atraso: number = 0;
+
+        if (!emprestimo.dataDevolucao) {
+            throw new Error("Data de devolução não está definida.");
+        }
         
         if (dataEntrega > emprestimo.dataDevolucao) {
             const diferencaMs = dataEntrega.getTime() - emprestimo.dataDevolucao.getTime();
