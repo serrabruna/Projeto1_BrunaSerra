@@ -39,7 +39,7 @@ class UsuarioRepository {
         return usuario;
     }
     removerUsuario(cpf) {
-        const index = this.usuarios.findIndex(u => u.cpf == cpf);
+        const index = this.usuarios.findIndex(u => u.cpf === cpf);
         if (index == -1) {
             return false;
         }

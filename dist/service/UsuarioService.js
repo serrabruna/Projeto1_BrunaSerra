@@ -106,9 +106,6 @@ class UsuarioService {
         }
     }
     removerUsuario(cpf) {
-        if (!Usuario_1.Usuario.validarCPF(cpf)) {
-            throw new Error("CPF Inválido!");
-        }
         const usuario = this.usuarioRepository.buscarUsuarioPorCPF(cpf);
         if (!usuario) {
             throw new Error("Usuário não encontrado.");

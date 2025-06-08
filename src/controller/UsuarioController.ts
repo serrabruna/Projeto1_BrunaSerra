@@ -70,14 +70,14 @@ export class UsuarioController{
         }
     }
 
-    removerUsuario(req: Request, res: Response){
-        const cpf = req.params.codigo;
+    removerUsuario(req: Request, res: Response): void{
+        const cpf = req.params.cpf;
         try{
             const usuario = this.usuarioService.removerUsuario(cpf);
             res.status(204).send();
         }
         catch(error: unknown){
-            let message: string = "Não foi possível remover usuário";
+            let message: string = "Não foi possível remover estoque";
             if(error instanceof Error){
                 message = error.message;
             }

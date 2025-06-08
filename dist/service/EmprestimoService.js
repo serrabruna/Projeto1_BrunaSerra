@@ -7,12 +7,14 @@ const UsuarioRepository_1 = require("../repository/UsuarioRepository");
 const EstoqueRepository_1 = require("../repository/EstoqueRepository");
 const CategoriaUsuarioRepository_1 = require("../repository/CategoriaUsuarioRepository");
 const LivroRepository_1 = require("../repository/LivroRepository");
+const UsuarioService_1 = require("./UsuarioService");
 class EmprestimoService {
     emprestimoRepository = EmprestimoRepository_1.EmprestimoRepository.getInstance();
     usuarioRepository = UsuarioRepository_1.UsuarioRepository.getInstance();
     estoqueRepository = EstoqueRepository_1.EstoqueRepository.getInstance();
     catUsuRepository = CategoriaUsuarioRepository_1.CategoriaUsuarioRepository.getInstance();
     livroRepository = LivroRepository_1.LivroRepository.getInstance();
+    usuarioService = new UsuarioService_1.UsuarioService();
     registrarEmprestimo(cpfUsuario, codigoExemplar) {
         const usuario = this.usuarioRepository.buscarUsuarioPorCPF(cpfUsuario);
         if (!usuario) {
@@ -53,9 +55,9 @@ class EmprestimoService {
     listarEmprestimos() {
         return this.emprestimoRepository.listarEmprestimos();
     }
-    registrarDevolução(id) {
+    registrarDevolucao(id) {
         const emprestimo = this.emprestimoRepository.buscarEmprestimoPorId(id);
-        if (!emprestimo || !emprestimo.dataEntrega) {
+        if (!emprestimo || emprestimo.dataEntrega) {
             throw new Error("Empréstimo não encontrado ou já devolvido.");
         }
         const dataEntrega = new Date();

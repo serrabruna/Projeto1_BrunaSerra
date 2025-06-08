@@ -52,7 +52,7 @@ export class UsuarioRepository{
     }
 
     removerUsuario(cpf: string): boolean{
-        const index = this.usuarios.findIndex(u => u.cpf == cpf);
+        const index = this.usuarios.findIndex(u => u.cpf === cpf);
         if(index == -1){
             return false;
         }

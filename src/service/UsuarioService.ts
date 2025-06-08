@@ -133,15 +133,10 @@ export class UsuarioService{
     }
 
     removerUsuario(cpf: string){
-        if(!Usuario.validarCPF(cpf)){
-            throw new Error("CPF Inválido!");
-        }
-
         const usuario = this.usuarioRepository.buscarUsuarioPorCPF(cpf);
         if(!usuario){
             throw new Error("Usuário não encontrado.");
         }
-
 
         const emprestimosAtivos = this.emprestimoRepository.emprestimosAbertos(cpf);
         if(emprestimosAtivos.length > 0){
