@@ -3,7 +3,6 @@ import { Emprestimo } from "../model/Emprestimo";
 export class EmprestimoRepository {
     private static instance: EmprestimoRepository;
     private emprestimos: Emprestimo[] = [];
-    private idCounter: number = 1;
 
     private constructor() {}
 
@@ -14,10 +13,8 @@ export class EmprestimoRepository {
     return this.instance;
     }
 
-    inserirEmprestimo(cpf: string, codigo: string): Emprestimo {
-        const novo = new Emprestimo(this.idCounter++, cpf, codigo);
-        this.emprestimos.push(novo);
-        return novo;
+    inserir(emprestimo: Emprestimo): void {
+        this.emprestimos.push(emprestimo);
     }
 
     listarEmprestimos(): Emprestimo[] {
@@ -42,6 +39,6 @@ export class EmprestimoRepository {
     }
 
     emprestimosAbertos(cpf: string): Emprestimo[] {
-        return this.emprestimos.filter(e => e.cpfUsuario === cpf && !e.dataDevolucao);
+        return this.emprestimos.filter(e => e.cpfUsuario === cpf && !e.dataEntrega);
     }
 }
