@@ -27,22 +27,12 @@ app.get("/library/usuarios/:cpf", usuarioController.buscarUsuario.bind(usuarioCo
 app.put("/library/usuarios/:cpf", usuarioController.atualizarUsuario.bind(usuarioController));
 app.delete("/library/usuarios/:cpf", usuarioController.removerUsuario.bind(usuarioController));
 
-//Categoria Usuário
-app.get("/library/categorias-usuario", catUsuController.listarCategorias.bind(catUsuController));
-
-//Curso
-app.get("/library/cursos", cursoController.listarCursos.bind(cursoController));
-
 //Livro
 app.post("/library/livros", livroController.criarLivro.bind(livroController));
 app.get("/library/livros", livroController.listarLivro.bind(livroController));
 app.get("/library/livros/:isbn", livroController.buscarLivro.bind(livroController));
 app.put("/library/livros/:isbn", livroController.atualizarLivro.bind(livroController));
 app.delete("/library/livros/:isbn", livroController.removerLivro.bind(livroController));
-
-
-//Categoria Livro
-app.get("/library/categoria-livro", categoriaLivroController.listarCategorias.bind(categoriaLivroController));
 
 //Estoque
 app.post("/library/estoque", estoqueController.criarExemplar.bind(estoqueController));
@@ -55,5 +45,10 @@ app.delete("/library/estoque/:codigo", estoqueController.RemoverEstoque.bind(est
 app.post("/library/emprestimos", emprestimoController.criarEmprestimo.bind(emprestimoController));
 app.get("/library/emprestimos", emprestimoController.listarEmprestimos.bind(emprestimoController));
 app.put("/library/emprestimos/:id/devolucao", emprestimoController.registrarDevolucao.bind(emprestimoController));
+
+//Catalogos
+app.get("/library/categorias-usuario", catUsuController.listarCategorias.bind(catUsuController));
+app.get("/library/cursos", cursoController.listarCursos.bind(cursoController));
+app.get("/library/categorias-livro", categoriaLivroController.listarCategorias.bind(categoriaLivroController));
 
 app.listen(PORT, () => console.log("Servidor rodando em http://localhost:3090"));
