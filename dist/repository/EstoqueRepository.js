@@ -11,14 +11,31 @@ class EstoqueRepository {
         }
         return this.instance;
     }
-    InserirExemplar(exemplar) {
+    inserirExemplar(exemplar) {
         this.exemplares.push(exemplar);
     }
+    buscarPorISBN(isbn) {
+        return this.exemplares.find(exemplar => exemplar.livro_isbn === isbn);
+    }
     buscarPorCodigo(codigo) {
-        return this.exemplares.find(exemplar => exemplar.isbnLivro === codigo);
+        return this.exemplares.find(exemplar => exemplar.codigo === codigo);
     }
     listarEstoque() {
         return this.exemplares;
+    }
+    atualizarStatus(codigo, status) {
+        const exemplar = this.buscarPorCodigo(codigo);
+        if (!exemplar)
+            return false;
+        exemplar.status = status;
+        return true;
+    }
+    remover(codigo) {
+        const index = this.exemplares.findIndex(e => e.codigo === codigo);
+        if (index === -1)
+            return false;
+        this.exemplares.splice(index, 1);
+        return true;
     }
 }
 exports.EstoqueRepository = EstoqueRepository;

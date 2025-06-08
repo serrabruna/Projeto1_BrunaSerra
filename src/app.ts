@@ -4,12 +4,15 @@ import { CategoriaUsuarioController } from "./controller/CategoriaUsuarioControl
 import { CursoController } from "./controller/CursoController";
 import { LivroController } from "./controller/LivroController";
 import { CategoriaLivroController } from "./controller/CategoriaLivroController";
+import { Estoque } from "./model/Estoque";
+import { EstoqueController } from "./controller/EstoqueController";
 
 const usuarioController = new UsuarioController();
 const catUsuController = new CategoriaUsuarioController();
 const cursoController = new CursoController();
 const livroController = new LivroController();
 const categoriaLivroController = new CategoriaLivroController();
+const estoqueController = new EstoqueController();
 
 const app = express();
 
@@ -36,5 +39,12 @@ app.put("/library/livros/:isbn", livroController.atualizarLivro.bind(livroContro
 
 //Categoria Livro
 app.get("/library/categoria-livro", categoriaLivroController.listarCategorias.bind(categoriaLivroController));
+
+//Estoque
+app.post("/library/estoque", estoqueController.criarExemplar.bind(estoqueController));
+app.get("/library/estoque", estoqueController.listarDisponivel.bind(estoqueController));
+app.get("/library/estoque/:codigo", estoqueController.buscarExemplar.bind(estoqueController));
+app.put("/library/estoque/:codigo", estoqueController.atualizarStatus.bind(estoqueController));
+app.delete("/library/estoque/:codigo", estoqueController.RemoverEstoque.bind(estoqueController));
 
 app.listen(PORT, () => console.log("Servidor rodando em http://localhost:3090"));

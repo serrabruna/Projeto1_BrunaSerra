@@ -17,6 +17,10 @@ export class EstoqueRepository{
         this.exemplares.push(exemplar);
     }
 
+    buscarPorISBN(isbn:string): Estoque | undefined{
+        return this.exemplares.find(exemplar => exemplar.livro_isbn === isbn);
+    }
+
     buscarPorCodigo(codigo: number): Estoque | undefined{
         return this.exemplares.find(exemplar => exemplar.codigo === codigo);
     }
@@ -24,11 +28,7 @@ export class EstoqueRepository{
     listarEstoque(): Estoque[]{
         return this.exemplares;
     }
-
-    listarDisponiveis(): Estoque[]{
-        return this.exemplares.filter(e => e.status === "disponivel");
-    }
-
+    
     atualizarStatus(codigo: number, status: "emprestado" | "disponivel"): boolean {
         const exemplar = this.buscarPorCodigo(codigo);
         if (!exemplar) return false;
@@ -39,8 +39,6 @@ export class EstoqueRepository{
     remover(codigo: number): boolean {
         const index = this.exemplares.findIndex(e => e.codigo === codigo);
         if (index === -1) return false;
-
-        if (this.exemplares[index].status !== "disponivel") return false;
 
         this.exemplares.splice(index, 1);
         return true;

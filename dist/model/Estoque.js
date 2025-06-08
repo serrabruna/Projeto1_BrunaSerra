@@ -2,16 +2,16 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Estoque = void 0;
 class Estoque {
-    id;
-    isbnLivro;
+    codigo;
+    livro_isbn;
     quantidade;
-    quantidadeEmprestada;
+    quantidade_emprestada;
     status;
-    constructor(id, isbnLivro, quantidade, quantidadeEmprestada) {
-        this.id = id;
-        this.isbnLivro = isbnLivro;
+    constructor(codigo, livro_isbn, quantidade, quantidade_emprestada) {
+        this.codigo = codigo;
+        this.livro_isbn = livro_isbn;
         this.quantidade = quantidade;
-        this.quantidadeEmprestada = quantidadeEmprestada;
+        this.quantidade_emprestada = quantidade_emprestada;
         this.status = 'disponivel';
     }
 }
