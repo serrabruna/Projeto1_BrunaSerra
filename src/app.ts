@@ -4,7 +4,6 @@ import { CategoriaUsuarioController } from "./controller/CategoriaUsuarioControl
 import { CursoController } from "./controller/CursoController";
 import { LivroController } from "./controller/LivroController";
 import { CategoriaLivroController } from "./controller/CategoriaLivroController";
-import { Estoque } from "./model/Estoque";
 import { EstoqueController } from "./controller/EstoqueController";
 
 const usuarioController = new UsuarioController();
@@ -24,6 +23,7 @@ app.post("/library/usuarios", usuarioController.criarUsuario.bind(usuarioControl
 app.get("/library/usuarios", usuarioController.listarUsuario.bind(usuarioController));
 app.get("/library/usuarios/:cpf", usuarioController.buscarUsuario.bind(usuarioController));
 app.put("/library/usuarios/:cpf", usuarioController.atualizarUsuario.bind(usuarioController));
+app.delete("/library/usuarios/:cpf", usuarioController.removerUsuario.bind(usuarioController));
 
 //Categoria Usuário
 app.get("/library/categorias-usuario", catUsuController.listarCategorias.bind(catUsuController));

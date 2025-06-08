@@ -70,7 +70,22 @@ export class UsuarioController{
         }
     }
 
-    //remover usuario = implementar após empréstimo
+    removerUsuario(req: Request, res: Response){
+        const cpf = req.params.codigo;
+        try{
+            const usuario = this.usuarioService.removerUsuario(cpf);
+            res.status(204).send();
+        }
+        catch(error: unknown){
+            let message: string = "Não foi possível remover usuário";
+            if(error instanceof Error){
+                message = error.message;
+            }
+            res.status(400).json({
+                message: message
+            });
+        }
+    }
 }
 
 

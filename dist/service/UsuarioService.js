@@ -5,10 +5,12 @@ const Usuario_1 = require("../model/Usuario");
 const UsuarioRepository_1 = require("../repository/UsuarioRepository");
 const CategoriaUsuarioService_1 = require("./CategoriaUsuarioService");
 const CursoService_1 = require("./CursoService");
+const EmprestimoRepository_1 = require("../repository/EmprestimoRepository");
 class UsuarioService {
     usuarioRepository = UsuarioRepository_1.UsuarioRepository.getInstance();
     categoriaService = new CategoriaUsuarioService_1.CategoriaUsuarioService();
     cursoService = new CursoService_1.CursoService();
+    emprestimoRepository = EmprestimoRepository_1.EmprestimoRepository.getInstance();
     cadastrarUsuario(usuarioData) {
         const { cpf, nome, email, categoriaId, cursoId } = usuarioData;
         if (!cpf || !nome || !email || !categoriaId) {
@@ -87,6 +89,38 @@ class UsuarioService {
             throw new Error("Erro inesperado ao atualizar usuário!");
         }
         return usuarioAtualizado;
+    }
+    aplicarSuspensao(cpf, diasAtraso) {
+        const usuario = this.usuarioRepository.buscarUsuarioPorCPF(cpf);
+        if (!usuario)
+            return;
+        const diasSuspensao = diasAtraso * 3;
+        usuario.diaSuspensao = diasSuspensao;
+        if (diasSuspensao > 60) {
+            usuario.status = "suspenso";
+        }
+        const emprestimos = this.emprestimoRepository.listarPorUsuario(cpf);
+        const atrasados = emprestimos.filter(e => e.diasAtraso && e.diasAtraso > 0);
+        if (atrasados.length > 2) {
+            usuario.status = "inativo";
+        }
+    }
+    removerUsuario(cpf) {
+        if (!Usuario_1.Usuario.validarCPF(cpf)) {
+            throw new Error("CPF Inválido!");
+        }
+        const usuario = this.usuarioRepository.buscarUsuarioPorCPF(cpf);
+        if (!usuario) {
+            throw new Error("Usuário não encontrado.");
+        }
+        const emprestimosAtivos = this.emprestimoRepository.emprestimosAbertos(cpf);
+        if (emprestimosAtivos.length > 0) {
+            throw new Error("Usuário não pode ser removido: possui empréstimos em aberto.");
+        }
+        const sucesso = this.usuarioRepository.removerUsuario(cpf);
+        if (!sucesso) {
+            throw new Error("Erro ao remover usuário.");
+        }
     }
 }
 exports.UsuarioService = UsuarioService;
