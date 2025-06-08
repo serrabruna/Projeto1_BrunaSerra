@@ -104,6 +104,9 @@ class UsuarioService {
         if (atrasados.length > 2) {
             usuario.status = "inativo";
         }
+        else if (diasSuspensao > 60) {
+            usuario.status = "suspenso";
+        }
     }
     removerUsuario(cpf) {
         if (!Usuario_1.Usuario.validarCPF(cpf)) {
