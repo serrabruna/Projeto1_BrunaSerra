@@ -77,7 +77,7 @@ export class UsuarioController{
             res.status(204).send();
         }
         catch(error: unknown){
-            let message: string = "Não foi possível remover estoque";
+            let message: string = "Não foi possível remover usuário";
             if(error instanceof Error){
                 message = error.message;
             }
