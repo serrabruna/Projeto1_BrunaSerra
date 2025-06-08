@@ -1,6 +1,8 @@
 import { Livro } from "../model/Livro";
 import { LivroRepository } from "../repository/LivroRepository";
 import { CategoriaLivroService } from "./CategoriaLivroService";
+import { EstoqueRepository } from "../repository/EstoqueRepository";
+import { EmprestimoRepository } from "../repository/EmprestimoRepository";
 
 type DadosAtualizacaoLivro = {
     isbn?: string;
@@ -14,6 +16,8 @@ type DadosAtualizacaoLivro = {
 export class LivroService{
     livroRepository: LivroRepository = LivroRepository.getInstance();
     categoriaService = new CategoriaLivroService();
+    estoqueRepository: EstoqueRepository = EstoqueRepository.getInstance();
+    emprestimoRepository: EmprestimoRepository = EmprestimoRepository.getInstance();
 
     AdicionarLivro(livroData: any): Livro {
         const {isbn, titulo, autor, editora, edicao, categoriaId} = livroData;
@@ -90,5 +94,28 @@ export class LivroService{
         return livroAtualizado;
     }
 
-    //remover livro após implementação de estoque e empréstimo
+    removerLivro(isbn: string): void{
+        const livro = this.livroRepository.buscarLivroPorISBN(isbn);
+        if (!livro) {
+            throw new Error("Livro não encontrado.");
+        }
+
+        const exemplares = this.estoqueRepository.listarEstoque().filter(e => e.livro_isbn === isbn);
+        if (exemplares.length > 0) {
+            throw new Error("Não é possível remover o livro: existem exemplares vinculados no estoque.");
+        }
+
+        const emprestimos = this.emprestimoRepository.listarEmprestimos();
+        const emprestimosAtivos = emprestimos.filter(e => {
+            const exemplar = this.estoqueRepository.buscarPorCodigo(e.codigoExemplar);
+            return exemplar && exemplar.livro_isbn === isbn && !e.dataEntrega;
+        });
+
+        if (emprestimosAtivos.length > 0) {
+            throw new Error("Não é possível remover o livro: existem empréstimos ativos.");
+        }
+        this.livroRepository.removerLivro(isbn);
+    }
+
 }
+
