@@ -5,6 +5,7 @@ import { EstoqueRepository } from "../repository/EstoqueRepository";
 import { CategoriaUsuarioRepository } from "../repository/CategoriaUsuarioRepository";
 import { LivroRepository } from "../repository/LivroRepository";
 import { UsuarioService } from "./UsuarioService";
+import { EstoqueService } from "./EstoqueService";
 
 
 export class EmprestimoService{
@@ -14,6 +15,7 @@ export class EmprestimoService{
     catUsuRepository: CategoriaUsuarioRepository = CategoriaUsuarioRepository.getInstance();
     livroRepository: LivroRepository = LivroRepository.getInstance();
     usuarioService = new UsuarioService();
+    estoqueService = new EstoqueService();
 
     registrarEmprestimo(cpfUsuario: string, codigoExemplar: number): Emprestimo{
         const usuario = this.usuarioRepository.buscarUsuarioPorCPF(cpfUsuario);
@@ -57,7 +59,7 @@ export class EmprestimoService{
         dataDevolucao.setDate(dataEmprestimo.getDate() + limiteDias);
 
         const novoEmprestimo = new Emprestimo(cpfUsuario, codigoExemplar);
-        exemplar.status = "emprestado";
+        this.estoqueService.marcarComoEmprestado(codigoExemplar);
         novoEmprestimo.dataEmprestimo = dataEmprestimo;
         novoEmprestimo.dataDevolucao = dataDevolucao;
 
@@ -98,7 +100,7 @@ export class EmprestimoService{
 
         const exemplar = this.estoqueRepository.buscarPorCodigo(emprestimo.codigoExemplar);
         if(exemplar){
-            exemplar.status = "disponivel";
+            this.estoqueService.marcarComoDisponivel(emprestimo.codigoExemplar);
         }
 
         return emprestimo;

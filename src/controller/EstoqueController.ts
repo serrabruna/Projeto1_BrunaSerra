@@ -70,6 +70,17 @@ export class EstoqueController{
         }
     }
 
+    resumoPorISBN(req: Request, res: Response): void {
+        try {
+            const { isbn } = req.params;
+            const resumo = this.estoqueService.getResumoEstoque(isbn);
+            res.status(200).json(resumo);
+        } 
+        catch (error: any){
+            res.status(404).json({ message: error.message });
+        }
+    }
+
     RemoverEstoque(req: Request, res: Response): void{
         const codigo = parseInt(req.params.codigo);
         try{

@@ -3,6 +3,7 @@ import { LivroRepository } from "../repository/LivroRepository";
 import { CategoriaLivroService } from "./CategoriaLivroService";
 import { EstoqueRepository } from "../repository/EstoqueRepository";
 import { EmprestimoRepository } from "../repository/EmprestimoRepository";
+import { EstoqueService } from "./EstoqueService";
 
 type DadosAtualizacaoLivro = {
     isbn?: string;
@@ -16,6 +17,7 @@ type DadosAtualizacaoLivro = {
 export class LivroService{
     livroRepository: LivroRepository = LivroRepository.getInstance();
     categoriaService = new CategoriaLivroService();
+    estoqueService = new EstoqueService();
     estoqueRepository: EstoqueRepository = EstoqueRepository.getInstance();
     emprestimoRepository: EmprestimoRepository = EmprestimoRepository.getInstance();
 
@@ -113,6 +115,9 @@ export class LivroService{
 
         if (emprestimosAtivos.length > 0) {
             throw new Error("Não é possível remover o livro: existem empréstimos ativos.");
+        }
+        if (this.estoqueService.existeExemplarDoLivro(isbn)) {
+            throw new Error("Não é possível remover o livro: existem exemplares vinculados.");
         }
         this.livroRepository.removerLivro(isbn);
     }
