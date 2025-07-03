@@ -6,6 +6,7 @@ import { CategoriaUsuarioRepository } from "../repository/CategoriaUsuarioReposi
 import { LivroRepository } from "../repository/LivroRepository";
 import { UsuarioService } from "./UsuarioService";
 
+
 export class EmprestimoService{
     emprestimoRepository: EmprestimoRepository = EmprestimoRepository.getInstance();
     usuarioRepository: UsuarioRepository = UsuarioRepository.getInstance();
@@ -19,8 +20,9 @@ export class EmprestimoService{
         if(!usuario){
             throw new Error("Usuário não encontrado!");
         }
+        this.usuarioService.verificarInativacaoUsuario(cpfUsuario);
         if(usuario.status !== "ativo"){
-            throw new Error("Usuário inativo.");
+            throw new Error("Usuário não está apto para empréstimo.");
         }
         if(usuario.diaSuspensao && usuario.diaSuspensao > 0){
             throw new Error("Usuário suspenso.");
