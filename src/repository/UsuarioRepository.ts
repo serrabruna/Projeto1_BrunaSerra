@@ -65,43 +65,63 @@ export class UsuarioRepository{
         return newUsuario;
     }
 
-    InserirUsuario(usuario: Usuario){
-        this.usuarios.push(usuario);
+    async buscarUsuarioPorCPF(cpf:string): Promise <Usuario | null>{
+        const resultado = await executarComandoSQL("SELECT * FROM biblioteca.Usuario WHERE cpf = ?", [cpf]);
+        if(resultado.length > 0){
+            const row = resultado[0];
+            const usuario = new Usuario(row.cpf, row.nome, row.email, row.categoriaId, row.cursoId);
+            usuario.id = row.id;
+            usuario.status = row.status;
+            usuario.diaSuspensao = row.diaSuspensao;
+            usuario.suspensaoAte = row.suspensaoAte;
+            return usuario;
+        }
+        return null;
     }
 
-    buscarUsuarioPorCPF(cpf:string): Usuario | undefined{
-        return this.usuarios.find(usuario => usuario.cpf === cpf);
+    async listarUsuarios(): Promise <Usuario[]>{
+        const resultado = await executarComandoSQL("SELECT * FROM biblioteca.Usuario", []);
+        return resultado.map((row: any) => {
+            const usuario = new Usuario(row.cpf, row.nome, row.email, row.categoriaId, row.cursoId);
+            usuario.id = row.id;
+            usuario.status = row.status;
+            usuario.diaSuspensao = row.diaSuspensao;
+            usuario.suspensaoAte = row.suspensaoAte;
+            return usuario;
+        });
     }
 
-    listarUsuarios(): Usuario[]{
-        return this.usuarios;
-    }
-
-    atualizarDadosUsuario(cpf: string, novosDados: DadosAtualizacaoUsuario): Usuario | undefined{
-        const usuario = this.buscarUsuarioPorCPF(cpf);
-        if(!usuario) return undefined;
+    async atualizarDadosUsuario(cpf: string, novosDados: DadosAtualizacaoUsuario): Promise<boolean>{
+        const campos = [];
+        const valores = [];
 
         if(novosDados.nome){
-            usuario.nome = novosDados.nome;
+            campos.push("nome = ?");
+            valores.push(novosDados.nome);
         }
         if(novosDados.email){
-            usuario.email = novosDados.email;
+            campos.push("email = ?");
+            valores.push(novosDados.email);
         }
         if(novosDados.categoriaId){
-            usuario.categoriaId = novosDados.categoriaId;
+            campos.push("categoriaId = ?");
+            valores.push(novosDados.categoriaId);
         }
         if(novosDados.cursoId){
-            usuario.cursoId = novosDados.cursoId;
+            campos.push("cursoId = ?");
+            valores.push(novosDados.cursoId);
         }
-        return usuario;
+
+        if(campos.length == 0) return false;
+
+        valores.push(cpf);
+        const query = `UPDATE biblioteca.Usuario SET ${campos.join(", ")}  WHERE cpf = ?`;
+        await executarComandoSQL(query, valores);
+        return true;
     }
 
-    removerUsuario(cpf: string): boolean{
-        const index = this.usuarios.findIndex(u => u.cpf === cpf);
-        if(index == -1){
-            return false;
-        }
-        this.usuarios.splice(index, 1);
-        return true;
+    async removerUsuario(cpf: string): Promise<boolean>{
+        const resultado = await executarComandoSQL("DELETE FROM biblioteca.Usuario WHERE cpf = ?", [cpf]);
+        return resultado.affectedRows > 0;
     }
 }
