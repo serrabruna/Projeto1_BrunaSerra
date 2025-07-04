@@ -127,12 +127,13 @@ export class UsuarioService{
         const emprestimos = this.emprestimoRepository.listarPorUsuario(cpf);
         const atrasados = emprestimos.filter(e => e.diasAtraso && e.diasAtraso > 0);
 
-        if(atrasados.length > 2){
-            usuario.status = "inativo";
-        } 
-        else if(diasSuspensao > 60){
+        if(diasSuspensao > 60){
             usuario.status = "suspenso";
         }
+        if(atrasados.length > 2){
+            usuario.status = "inativo";
+        }
+
     }
 
     removerUsuario(cpf: string){
@@ -154,6 +155,28 @@ export class UsuarioService{
         const sucesso = this.usuarioRepository.removerUsuario(cpf);
         if (!sucesso) {
             throw new Error("Erro ao remover usuário.");
+        }
+    }
+
+    verificarInativacaoUsuario(cpf: string): void {
+        const usuario = this.usuarioRepository.buscarUsuarioPorCPF(cpf);
+        if (!usuario) return;
+
+        const emprestimos = this.emprestimoRepository.listarPorUsuario(cpf);
+        const hoje = new Date();
+
+        const atrasosGraves = emprestimos.filter(e => {
+            if (!e.dataEntrega && e.dataDevolucao) {
+                const diff = hoje.getTime() - e.dataDevolucao.getTime();
+                const diasAtraso = diff / (1000 * 60 * 60 * 24);
+                return diasAtraso > 60;
+            }
+            return false;
+        });
+
+        if (atrasosGraves.length > 0) {
+        usuario.status = "inativo";
+        usuario.diaSuspensao = 0;
         }
     }
 }

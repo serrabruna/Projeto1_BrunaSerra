@@ -11,6 +11,7 @@ class Usuario {
     cursoId;
     status;
     diaSuspensao;
+    suspensaoAte;
     constructor(cpf, nome, email, categoriaId, cursoId) {
         if (!Usuario.validarCPF(cpf)) {
             throw new Error("CPF inválido!");

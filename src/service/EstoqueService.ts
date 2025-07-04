@@ -48,6 +48,33 @@ export class EstoqueService{
         return exemplar;
     }
 
+    marcarComoEmprestado(codigo: number): void{
+        const exemplar = this.buscarExemplar(codigo);
+        if (exemplar.status !== "disponivel"){
+            throw new Error("Exemplar não está disponível para empréstimo.");
+        }
+        exemplar.status = "emprestado";
+        exemplar.quantidade_emprestada = 1;
+    }
+
+    marcarComoDisponivel(codigo: number): void{
+        const exemplar = this.buscarExemplar(codigo);
+        exemplar.status = "disponivel";
+        exemplar.quantidade_emprestada = 0;
+    }
+
+    existeExemplarDoLivro(isbn: string): boolean {
+        return this.estoqueRepository.listarEstoque().some((e) => e.livro_isbn === isbn);
+    }
+
+    getResumoEstoque(isbn: string): { total: number; disponiveis: number } {
+        const exemplares = this.estoqueRepository.listarEstoque().filter((e) => e.livro_isbn === isbn);
+        return{
+            total: exemplares.length,
+            disponiveis: exemplares.filter((e) => e.status === "disponivel").length,
+        };
+}
+
     removerExemplar(codigo: number): void {
         const exemplar = this.buscarExemplar(codigo);
         if(exemplar.status === "emprestado"){

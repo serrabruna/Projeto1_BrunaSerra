@@ -9,6 +9,7 @@ export class Usuario{
     cursoId: number;
     status: 'ativo' | 'inativo' | 'suspenso';
     diaSuspensao: number;
+    suspensaoAte?: Date;
     
     constructor(cpf: string, nome: string, email: string, categoriaId: number, cursoId: number){
         if(!Usuario.validarCPF(cpf)){
