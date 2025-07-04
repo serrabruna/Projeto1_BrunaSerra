@@ -2,7 +2,6 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Usuario = void 0;
 class Usuario {
-    static proximoId = 0;
     id;
     cpf;
     nome;
@@ -12,11 +11,11 @@ class Usuario {
     status;
     diaSuspensao;
     suspensaoAte;
-    constructor(cpf, nome, email, categoriaId, cursoId) {
+    constructor(cpf, nome, email, categoriaId, cursoId, id) {
         if (!Usuario.validarCPF(cpf)) {
             throw new Error("CPF inválido!");
         }
-        this.id = Usuario.proximoId++;
+        this.id = id;
         this.cpf = cpf;
         this.nome = nome;
         this.email = email;

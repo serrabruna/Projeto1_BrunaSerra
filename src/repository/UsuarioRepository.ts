@@ -1,4 +1,5 @@
 import {Usuario} from "../model/Usuario"
+import { executarComandoSQL } from "../database/mysql";
 
 type DadosAtualizacaoUsuario = {
     nome?: string;
@@ -11,13 +12,57 @@ export class UsuarioRepository{
     private static instance: UsuarioRepository;
     private usuarios: Usuario[] = [];
 
-    private constructor(){}
+    constructor(){}
 
     public static getInstance(): UsuarioRepository{
         if(!this.instance) {
             this.instance = new UsuarioRepository();
         }
         return this.instance;
+    }
+
+    private imprimeResult(err:any, result:any){
+        if(result != undefined){
+            console.log("Dentro callback", result);
+        }
+    }
+
+    async createTable() {
+        const query = ` CREATE TABLE IF NOT EXISTS biblioteca.Usuario (
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            cpf VARCHAR(11) NOT NULL UNIQUE,
+            nome VARCHAR(255) NOT NULL,
+            email VARCHAR(255) NOT NULL,
+            categoriaId INT NOT NULL,
+            cursoId INT NOT NULL,
+            status VARCHAR(10) DEFAULT 'ativo',
+            diaSuspensao INT DEFAULT 0,
+            suspensaoAte DATE
+            )`
+        try{
+            const resultado = await executarComandoSQL(query, []);
+            console.log('Tabela Usuario criada com sucesso:', resultado);
+        }catch(err){
+            console.error('Erro ao executar a query:', err);
+        }
+    }
+
+    async insertUsuario(
+        cpf: string,
+        nome: string,
+        email: string,
+        categoriaId: number,
+        cursoId: number
+    ):Promise<Usuario>{
+        const resultado = await executarComandoSQL(
+            "INSERT INTO biblioteca.Usuario (cpf, nome, email, categoriaId, cursoId, status, diaSuspensao) VALUES (?, ?, ?, ?, ?, 'ativo', 0)",
+            [cpf, nome, email, categoriaId, cursoId]
+        );
+        const newUsuario = new Usuario(cpf, nome, email, categoriaId, cursoId);
+        newUsuario.id = resultado.insertId;+
+
+        console.log('Usuario inserido com sucesso:', newUsuario);
+        return newUsuario;
     }
 
     InserirUsuario(usuario: Usuario){

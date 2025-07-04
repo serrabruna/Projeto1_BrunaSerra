@@ -1,7 +1,5 @@
 export class Usuario{
-    static proximoId: number = 0;
-
-    id: number;
+    id?: number;
     cpf: string;
     nome: string;
     email: string;
@@ -11,12 +9,12 @@ export class Usuario{
     diaSuspensao: number;
     suspensaoAte?: Date;
     
-    constructor(cpf: string, nome: string, email: string, categoriaId: number, cursoId: number){
+    constructor(cpf: string, nome: string, email: string, categoriaId: number, cursoId: number, id?:number){
         if(!Usuario.validarCPF(cpf)){
             throw new Error("CPF inválido!");
         }
         
-        this.id = Usuario.proximoId++;
+        this.id = id;
         this.cpf = cpf;
         this.nome = nome;
         this.email = email;
