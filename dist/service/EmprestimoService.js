@@ -8,6 +8,7 @@ const EstoqueRepository_1 = require("../repository/EstoqueRepository");
 const CategoriaUsuarioRepository_1 = require("../repository/CategoriaUsuarioRepository");
 const LivroRepository_1 = require("../repository/LivroRepository");
 const UsuarioService_1 = require("./UsuarioService");
+const EstoqueService_1 = require("./EstoqueService");
 class EmprestimoService {
     emprestimoRepository = EmprestimoRepository_1.EmprestimoRepository.getInstance();
     usuarioRepository = UsuarioRepository_1.UsuarioRepository.getInstance();
@@ -15,6 +16,7 @@ class EmprestimoService {
     catUsuRepository = CategoriaUsuarioRepository_1.CategoriaUsuarioRepository.getInstance();
     livroRepository = LivroRepository_1.LivroRepository.getInstance();
     usuarioService = new UsuarioService_1.UsuarioService();
+    estoqueService = new EstoqueService_1.EstoqueService();
     registrarEmprestimo(cpfUsuario, codigoExemplar) {
         const usuario = this.usuarioRepository.buscarUsuarioPorCPF(cpfUsuario);
         if (!usuario) {
@@ -50,7 +52,7 @@ class EmprestimoService {
         const dataDevolucao = new Date();
         dataDevolucao.setDate(dataEmprestimo.getDate() + limiteDias);
         const novoEmprestimo = new Emprestimo_1.Emprestimo(cpfUsuario, codigoExemplar);
-        exemplar.status = "emprestado";
+        this.estoqueService.marcarComoEmprestado(codigoExemplar);
         novoEmprestimo.dataEmprestimo = dataEmprestimo;
         novoEmprestimo.dataDevolucao = dataDevolucao;
         this.emprestimoRepository.inserir(novoEmprestimo);
@@ -83,7 +85,7 @@ class EmprestimoService {
         }
         const exemplar = this.estoqueRepository.buscarPorCodigo(emprestimo.codigoExemplar);
         if (exemplar) {
-            exemplar.status = "disponivel";
+            this.estoqueService.marcarComoDisponivel(emprestimo.codigoExemplar);
         }
         return emprestimo;
     }

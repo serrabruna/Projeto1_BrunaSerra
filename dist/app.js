@@ -39,6 +39,7 @@ app.get("/library/estoque", estoqueController.listarDisponivel.bind(estoqueContr
 app.get("/library/estoque/:codigo", estoqueController.buscarExemplar.bind(estoqueController));
 app.put("/library/estoque/:codigo", estoqueController.atualizarStatus.bind(estoqueController));
 app.delete("/library/estoque/:codigo", estoqueController.RemoverEstoque.bind(estoqueController));
+app.get("/library/estoque/resumo/:isbn", estoqueController.resumoPorISBN.bind(estoqueController));
 //Emprestimo 
 app.post("/library/emprestimos", emprestimoController.criarEmprestimo.bind(emprestimoController));
 app.get("/library/emprestimos", emprestimoController.listarEmprestimos.bind(emprestimoController));

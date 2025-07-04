@@ -67,6 +67,16 @@ class EstoqueController {
             });
         }
     }
+    resumoPorISBN(req, res) {
+        try {
+            const { isbn } = req.params;
+            const resumo = this.estoqueService.getResumoEstoque(isbn);
+            res.status(200).json(resumo);
+        }
+        catch (error) {
+            res.status(404).json({ message: error.message });
+        }
+    }
     RemoverEstoque(req, res) {
         const codigo = parseInt(req.params.codigo);
         try {

@@ -6,9 +6,11 @@ const LivroRepository_1 = require("../repository/LivroRepository");
 const CategoriaLivroService_1 = require("./CategoriaLivroService");
 const EstoqueRepository_1 = require("../repository/EstoqueRepository");
 const EmprestimoRepository_1 = require("../repository/EmprestimoRepository");
+const EstoqueService_1 = require("./EstoqueService");
 class LivroService {
     livroRepository = LivroRepository_1.LivroRepository.getInstance();
     categoriaService = new CategoriaLivroService_1.CategoriaLivroService();
+    estoqueService = new EstoqueService_1.EstoqueService();
     estoqueRepository = EstoqueRepository_1.EstoqueRepository.getInstance();
     emprestimoRepository = EmprestimoRepository_1.EmprestimoRepository.getInstance();
     AdicionarLivro(livroData) {
@@ -88,6 +90,9 @@ class LivroService {
         });
         if (emprestimosAtivos.length > 0) {
             throw new Error("Não é possível remover o livro: existem empréstimos ativos.");
+        }
+        if (this.estoqueService.existeExemplarDoLivro(isbn)) {
+            throw new Error("Não é possível remover o livro: existem exemplares vinculados.");
         }
         this.livroRepository.removerLivro(isbn);
     }
