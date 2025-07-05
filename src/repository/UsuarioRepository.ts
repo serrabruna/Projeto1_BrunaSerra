@@ -91,33 +91,44 @@ export class UsuarioRepository{
         });
     }
 
-    async atualizarDadosUsuario(cpf: string, novosDados: DadosAtualizacaoUsuario): Promise<boolean>{
-        const campos = [];
-        const valores = [];
+    async atualizarDadosUsuario(cpf: string, novosDados: DadosAtualizacaoUsuario): Promise<Usuario | null>{
+        let campos: string[] = [];
+        let valores: any[] = [];
 
-        if(novosDados.nome){
+        if (novosDados.nome) {
             campos.push("nome = ?");
             valores.push(novosDados.nome);
         }
-        if(novosDados.email){
+
+        if (novosDados.email) {
             campos.push("email = ?");
             valores.push(novosDados.email);
         }
-        if(novosDados.categoriaId){
+
+        if (novosDados.categoriaId) {
             campos.push("categoriaId = ?");
             valores.push(novosDados.categoriaId);
         }
-        if(novosDados.cursoId){
+
+        if (novosDados.cursoId) {
             campos.push("cursoId = ?");
             valores.push(novosDados.cursoId);
         }
 
-        if(campos.length == 0) return false;
+        if (campos.length === 0) {
+            return null;
+        }
 
+        const query = `UPDATE biblioteca.Usuario SET ${campos.join(", ")} WHERE cpf = ?`;
         valores.push(cpf);
-        const query = `UPDATE biblioteca.Usuario SET ${campos.join(", ")}  WHERE cpf = ?`;
-        await executarComandoSQL(query, valores);
-        return true;
+
+        const resultado = await executarComandoSQL(query, valores);
+
+        if (resultado.affectedRows === 0) {
+            return null;
+        }
+
+        return this.buscarUsuarioPorCPF(cpf);
     }
 
     async removerUsuario(cpf: string): Promise<boolean>{
