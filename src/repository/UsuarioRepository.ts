@@ -6,6 +6,9 @@ type DadosAtualizacaoUsuario = {
     email?: string;
     categoriaId?: number;
     cursoId?: number;
+    status?:  'ativo' | 'inativo' | 'suspenso';
+    diaSuspensao?: number;
+    suspensaoAte?: Date;
 }
 
 export class UsuarioRepository{
@@ -115,6 +118,21 @@ export class UsuarioRepository{
             valores.push(novosDados.cursoId);
         }
 
+        if (novosDados.status) {
+            campos.push("status = ?");
+            valores.push(novosDados.status);
+        }
+
+        if(novosDados.diaSuspensao){
+            campos.push("diaSuspensao = ?");
+            valores.push(novosDados.diaSuspensao);
+        }
+
+        if (novosDados.suspensaoAte) {
+            campos.push("suspensaoAte = ?");
+            valores.push(novosDados.suspensaoAte);
+        }
+        
         if (campos.length === 0) {
             return null;
         }

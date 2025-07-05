@@ -11,6 +11,9 @@ type DadosAtualizacaoUsuario = {
     email?: string;
     categoriaId?: number;
     cursoId?: number;
+    status?:  'ativo' | 'inativo' | 'suspenso';
+    diaSuspensao?: number;
+    suspensaoAte?: Date;
 }
 
 export class UsuarioService{
@@ -84,6 +87,7 @@ export class UsuarioService{
 
     async atualizarUsuario(cpf: string, novosDados: DadosAtualizacaoUsuario): Promise<Usuario>{
         const usuario = await this.usuarioRepository.buscarUsuarioPorCPF(cpf);
+        ''
         if(!usuario){
             throw new Error("Usuário não encontrado!");
         }
@@ -117,8 +121,8 @@ export class UsuarioService{
         return usuarioAtualizado;
     }
 
-    aplicarSuspensao(cpf: string, diasAtraso: number){
-        const usuario = this.usuarioRepository.buscarUsuarioPorCPF(cpf);
+    async aplicarSuspensao(cpf: string, diasAtraso: number): Promise<void>{
+        const usuario = await this.usuarioRepository.buscarUsuarioPorCPF(cpf);
         if(!usuario) return;
 
         const diasSuspensao = diasAtraso * 3;
@@ -140,12 +144,12 @@ export class UsuarioService{
 
     }
 
-    removerUsuario(cpf: string){
+    async removerUsuario(cpf: string){
         if(!Usuario.validarCPF(cpf)){
             throw new Error("CPF Inválido!");
         }
 
-        const usuario = this.usuarioRepository.buscarUsuarioPorCPF(cpf);
+        const usuario = await this.usuarioRepository.buscarUsuarioPorCPF(cpf);
         if(!usuario){
             throw new Error("Usuário não encontrado.");
         }
@@ -162,8 +166,8 @@ export class UsuarioService{
         }
     }
 
-    verificarInativacaoUsuario(cpf: string): void {
-        const usuario = this.usuarioRepository.buscarUsuarioPorCPF(cpf);
+    async verificarInativacaoUsuario(cpf: string): Promise<void> {
+        const usuario = await this.usuarioRepository.buscarUsuarioPorCPF(cpf);
         if (!usuario) return;
 
         const emprestimos = this.emprestimoRepository.listarPorUsuario(cpf);
@@ -172,15 +176,19 @@ export class UsuarioService{
         const atrasosGraves = emprestimos.filter(e => {
             if (!e.dataEntrega && e.dataDevolucao) {
                 const diff = hoje.getTime() - e.dataDevolucao.getTime();
-                const diasAtraso = diff / (1000 * 60 * 60 * 24);
-                return diasAtraso > 60;
+                return diff / (1000 * 60 * 60 * 24) > 60;
             }
             return false;
         });
 
         if (atrasosGraves.length > 0) {
-        usuario.status = "inativo";
-        usuario.diaSuspensao = 0;
+            const novoStatus = "inativo";
+            const diasSuspensao = 0;
+
+            await this.usuarioRepository.atualizarDadosUsuario(cpf, {
+                status: novoStatus,
+                diaSuspensao: diasSuspensao
+            });
         }
     }
 }
