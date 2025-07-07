@@ -9,7 +9,7 @@
         "specVersion": 3,
         "spec": {
             "info": {
-                "title": "API Documentação",
+                "title": "API Biblioteca Documentação",
                 "version": "1.0.0",
                 "description": "Documentação da API usando Swagger"
             },
