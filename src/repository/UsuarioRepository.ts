@@ -1,16 +1,6 @@
 import {Usuario} from "../model/Usuario"
 import { executarComandoSQL } from "../database/mysql";
 
-type DadosAtualizacaoUsuario = {
-    nome?: string;
-    email?: string;
-    categoriaId?: number;
-    cursoId?: number;
-    status?:  'ativo' | 'inativo' | 'suspenso';
-    diaSuspensao?: number;
-    suspensaoAte?: Date;
-}
-
 export class UsuarioRepository{
     private static instance: UsuarioRepository;
     private usuarios: Usuario[] = [];
@@ -94,59 +84,27 @@ export class UsuarioRepository{
         });
     }
 
-    async atualizarDadosUsuario(cpf: string, novosDados: DadosAtualizacaoUsuario): Promise<Usuario | null>{
-        let campos: string[] = [];
-        let valores: any[] = [];
+    async atualizarDadosUsuario(usuario: Usuario): Promise<Usuario | null>{
+        const query = `
+        UPDATE biblioteca.Usuario
+        SET nome = ?, email = ?, categoriaId = ?, cursoId = ?, status = ?, diaSuspensao = ?, suspensaoAte = ?
+        WHERE cpf = ?`;
 
-        if (novosDados.nome) {
-            campos.push("nome = ?");
-            valores.push(novosDados.nome);
+        const resultado = await executarComandoSQL(query, [
+            usuario.nome,
+            usuario.email,
+            usuario.categoriaId,
+            usuario.cursoId,
+            usuario.status,
+            usuario.diaSuspensao,
+            usuario.suspensaoAte,
+            usuario.cpf
+        ]);
+
+        if (resultado.affectedRows > 0) {
+            return this.buscarUsuarioPorCPF(usuario.cpf);
         }
-
-        if (novosDados.email) {
-            campos.push("email = ?");
-            valores.push(novosDados.email);
-        }
-
-        if (novosDados.categoriaId) {
-            campos.push("categoriaId = ?");
-            valores.push(novosDados.categoriaId);
-        }
-
-        if (novosDados.cursoId) {
-            campos.push("cursoId = ?");
-            valores.push(novosDados.cursoId);
-        }
-
-        if (novosDados.status) {
-            campos.push("status = ?");
-            valores.push(novosDados.status);
-        }
-
-        if(novosDados.diaSuspensao){
-            campos.push("diaSuspensao = ?");
-            valores.push(novosDados.diaSuspensao);
-        }
-
-        if (novosDados.suspensaoAte) {
-            campos.push("suspensaoAte = ?");
-            valores.push(novosDados.suspensaoAte);
-        }
-        
-        if (campos.length === 0) {
-            return null;
-        }
-
-        const query = `UPDATE biblioteca.Usuario SET ${campos.join(", ")} WHERE cpf = ?`;
-        valores.push(cpf);
-
-        const resultado = await executarComandoSQL(query, valores);
-
-        if (resultado.affectedRows === 0) {
-            return null;
-        }
-
-        return this.buscarUsuarioPorCPF(cpf);
+        return null; 
     }
 
     async removerUsuario(cpf: string): Promise<boolean>{
