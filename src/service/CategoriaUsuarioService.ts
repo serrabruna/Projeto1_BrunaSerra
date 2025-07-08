@@ -1,13 +1,14 @@
 import { CategoriaUsuarioRepository } from "../repository/CategoriaUsuarioRepository";
+import { CategoriaUsuario } from "../model/entity/CategoriaUsuario";
 
 export class CategoriaUsuarioService{
     categoriaUsuRepository = CategoriaUsuarioRepository.getInstance();
 
-    listarCategorias(){
-        return this.categoriaUsuRepository.listarCategorias();
+    async listarCategorias(): Promise <CategoriaUsuario[]>{
+        return await this.categoriaUsuRepository.listarCategorias();
     }
 
-    buscarPorId(id: number){
-        return this.categoriaUsuRepository.buscarPorId(id);
+    async buscarPorId(id: number): Promise <CategoriaUsuario | undefined>{
+        return await this.categoriaUsuRepository.buscarPorId(id);
     }
 }
