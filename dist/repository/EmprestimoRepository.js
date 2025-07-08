@@ -18,7 +18,7 @@ class EmprestimoRepository {
         return this.emprestimos;
     }
     buscarEmprestimoPorId(id) {
-        return this.emprestimos.find(e => e.id === id);
+        return this.emprestimos.find((e) => e.id === id);
     }
     registrarDevolucao(id, data) {
         const emprestimo = this.buscarEmprestimoPorId(id);
@@ -29,10 +29,10 @@ class EmprestimoRepository {
         return false;
     }
     listarPorUsuario(cpf) {
-        return this.emprestimos.filter(e => e.cpfUsuario === cpf);
+        return this.emprestimos.filter((e) => e.cpfUsuario === cpf);
     }
     emprestimosAbertos(cpf) {
-        return this.emprestimos.filter(e => e.cpfUsuario === cpf && !e.dataEntrega);
+        return this.emprestimos.filter((e) => e.cpfUsuario === cpf && !e.dataEntrega);
     }
 }
 exports.EmprestimoRepository = EmprestimoRepository;

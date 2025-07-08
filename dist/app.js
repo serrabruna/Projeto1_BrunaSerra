@@ -4,6 +4,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
+const routes_1 = require("./route/routes");
+const swagger_1 = require("./config/swagger");
 const UsuarioController_1 = require("./controller/UsuarioController");
 const CategoriaUsuarioController_1 = require("./controller/CategoriaUsuarioController");
 const CursoController_1 = require("./controller/CursoController");
@@ -19,14 +21,14 @@ const categoriaLivroController = new CategoriaLivroController_1.CategoriaLivroCo
 const estoqueController = new EstoqueController_1.EstoqueController();
 const emprestimoController = new EmprestimoController_1.EmprestimoController();
 const app = (0, express_1.default)();
-const PORT = process.env.PORT ?? 3090;
+const PORT = 3090;
 app.use(express_1.default.json());
-//Usuário
-app.post("/library/usuarios", usuarioController.criarUsuario.bind(usuarioController));
-app.get("/library/usuarios", usuarioController.listarUsuario.bind(usuarioController));
-app.get("/library/usuarios/:cpf", usuarioController.buscarUsuario.bind(usuarioController));
-app.put("/library/usuarios/:cpf", usuarioController.atualizarUsuario.bind(usuarioController));
-app.delete("/library/usuarios/:cpf", usuarioController.removerUsuario.bind(usuarioController));
+const apiRouter = express_1.default.Router();
+(0, routes_1.RegisterRoutes)(apiRouter);
+app.use('/library', apiRouter);
+(0, routes_1.RegisterRoutes)(app);
+(0, swagger_1.setupSwagger)(app);
+app.listen(PORT, () => console.log("API online na porta: " + PORT));
 //Livro
 app.post("/library/livros", livroController.criarLivro.bind(livroController));
 app.get("/library/livros", livroController.listarLivro.bind(livroController));

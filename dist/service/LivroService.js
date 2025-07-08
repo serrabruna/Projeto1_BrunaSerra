@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.LivroService = void 0;
-const Livro_1 = require("../model/Livro");
+const Livro_1 = require("../model/entity/Livro");
 const LivroRepository_1 = require("../repository/LivroRepository");
 const CategoriaLivroService_1 = require("./CategoriaLivroService");
 const EstoqueRepository_1 = require("../repository/EstoqueRepository");
@@ -36,11 +36,19 @@ class LivroService {
     listarLivroComFiltro(filtros) {
         const { isbn, titulo, autor, categoriaId } = filtros;
         const livros = this.livroRepository.listarLivros();
-        return livros.filter(livro => {
-            const combinaISBN = isbn ? livro.isbn.toLowerCase().includes(isbn.toLowerCase()) : true;
-            const combinaTitulo = titulo ? livro.titulo.toLowerCase().includes(titulo.toLowerCase()) : true;
-            const combinaAutor = autor ? livro.autor.toLowerCase().includes(autor.toLowerCase()) : true;
-            const combinaCatId = categoriaId ? livro.categoriaId === categoriaId : true;
+        return livros.filter((livro) => {
+            const combinaISBN = isbn
+                ? livro.isbn.toLowerCase().includes(isbn.toLowerCase())
+                : true;
+            const combinaTitulo = titulo
+                ? livro.titulo.toLowerCase().includes(titulo.toLowerCase())
+                : true;
+            const combinaAutor = autor
+                ? livro.autor.toLowerCase().includes(autor.toLowerCase())
+                : true;
+            const combinaCatId = categoriaId
+                ? livro.categoriaId === categoriaId
+                : true;
             return combinaISBN && combinaTitulo && combinaAutor && combinaCatId;
         });
     }
@@ -56,7 +64,11 @@ class LivroService {
         if (!livro) {
             throw new Error("Livro não encontrado!");
         }
-        if (!novosDados.titulo && !novosDados.autor && !novosDados.editora && !novosDados.edicao && !novosDados.categoriaId) {
+        if (!novosDados.titulo &&
+            !novosDados.autor &&
+            !novosDados.editora &&
+            !novosDados.edicao &&
+            !novosDados.categoriaId) {
             throw new Error("Nenhum dado informado para atualização.");
         }
         if (novosDados.isbn && novosDados.isbn !== isbn) {
@@ -79,12 +91,14 @@ class LivroService {
         if (!livro) {
             throw new Error("Livro não encontrado.");
         }
-        const exemplares = this.estoqueRepository.listarEstoque().filter(e => e.livro_isbn === isbn);
+        const exemplares = this.estoqueRepository
+            .listarEstoque()
+            .filter((e) => e.livro_isbn === isbn);
         if (exemplares.length > 0) {
             throw new Error("Não é possível remover o livro: existem exemplares vinculados no estoque.");
         }
         const emprestimos = this.emprestimoRepository.listarEmprestimos();
-        const emprestimosAtivos = emprestimos.filter(e => {
+        const emprestimosAtivos = emprestimos.filter((e) => {
             const exemplar = this.estoqueRepository.buscarPorCodigo(e.codigoExemplar);
             return exemplar && exemplar.livro_isbn === isbn && !e.dataEntrega;
         });

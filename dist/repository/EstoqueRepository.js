@@ -15,10 +15,10 @@ class EstoqueRepository {
         this.exemplares.push(exemplar);
     }
     buscarPorISBN(isbn) {
-        return this.exemplares.find(exemplar => exemplar.livro_isbn === isbn);
+        return this.exemplares.find((exemplar) => exemplar.livro_isbn === isbn);
     }
     buscarPorCodigo(codigo) {
-        return this.exemplares.find(exemplar => exemplar.codigo === codigo);
+        return this.exemplares.find((exemplar) => exemplar.codigo === codigo);
     }
     listarEstoque() {
         return this.exemplares;
@@ -31,7 +31,7 @@ class EstoqueRepository {
         return true;
     }
     remover(codigo) {
-        const index = this.exemplares.findIndex(e => e.codigo === codigo);
+        const index = this.exemplares.findIndex((e) => e.codigo === codigo);
         if (index === -1)
             return false;
         this.exemplares.splice(index, 1);

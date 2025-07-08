@@ -1,17 +1,18 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.UsuarioService = void 0;
-const Usuario_1 = require("../model/Usuario");
+const Usuario_1 = require("../model/entity/Usuario");
 const UsuarioRepository_1 = require("../repository/UsuarioRepository");
 const CategoriaUsuarioService_1 = require("./CategoriaUsuarioService");
 const CursoService_1 = require("./CursoService");
 const EmprestimoRepository_1 = require("../repository/EmprestimoRepository");
+const mysql_1 = require("../database/mysql");
 class UsuarioService {
     usuarioRepository = UsuarioRepository_1.UsuarioRepository.getInstance();
     categoriaService = new CategoriaUsuarioService_1.CategoriaUsuarioService();
     cursoService = new CursoService_1.CursoService();
     emprestimoRepository = EmprestimoRepository_1.EmprestimoRepository.getInstance();
-    cadastrarUsuario(usuarioData) {
+    async cadastrarUsuario(usuarioData) {
         const { cpf, nome, email, categoriaId, cursoId } = usuarioData;
         if (!cpf || !nome || !email || !categoriaId) {
             throw new Error("Informações incompletas");
@@ -19,50 +20,49 @@ class UsuarioService {
         if (!Usuario_1.Usuario.validarCPF(cpf)) {
             throw new Error("CPF Inválido!");
         }
-        if (this.usuarioRepository.buscarUsuarioPorCPF(cpf)) {
-            throw new Error("CPF já cadastrado!");
+        const existente = await this.usuarioRepository.buscarUsuarioPorCPF(cpf);
+        if (existente) {
+            throw new Error("CPF já cadastrado");
         }
         const categoria = this.categoriaService.buscarPorId(categoriaId);
         if (!categoria) {
             throw new Error("Categoria inválida!");
         }
-        if (categoriaId !== 3) {
-            if (cursoId === undefined) {
-                throw new Error("Curso é obrigatório para alunos e professores.");
-            }
+        if (categoriaId !== 3 && cursoId === undefined) {
+            throw new Error("Curso é obrigatório para alunos e professores.");
+        }
+        if (cursoId !== undefined) {
             const curso = this.cursoService.buscarPorId(cursoId);
             if (!curso) {
-                throw new Error("Curso inválido!");
+                throw new Error("Curso Inválido!");
             }
         }
         const cursoFinal = categoriaId === 3 ? 0 : cursoId;
-        const novoUsuario = new Usuario_1.Usuario(cpf, nome, email, categoriaId, cursoFinal);
-        this.usuarioRepository.InserirUsuario(novoUsuario);
-        return novoUsuario;
+        return this.usuarioRepository.insertUsuario(cpf, nome, email, categoriaId, cursoFinal);
     }
-    listarUsuarioComFiltro(filtros) {
-        const { nome, status, categoriaId, cursoId } = filtros;
-        const usuarios = this.usuarioRepository.listarUsuarios();
-        return usuarios.filter(usuario => {
-            const combinaNomes = nome ? usuario.nome.toLowerCase().includes(nome.toLowerCase()) : true;
-            const combinaStatus = status ? usuario.status === status : true;
-            const combinaCatId = categoriaId ? usuario.categoriaId === categoriaId : true;
-            const combinaCurId = cursoId ? usuario.cursoId === cursoId : true;
-            return combinaNomes && combinaStatus && combinaCatId && combinaCurId;
+    async listarUsuarios() {
+        const resultado = await (0, mysql_1.executarComandoSQL)("SELECT * FROM biblioteca.Usuario", []);
+        return resultado.map((row) => {
+            const usuario = new Usuario_1.Usuario(row.cpf, row.nome, row.email, row.categoriaId, row.cursoId);
+            usuario.id = row.id;
+            usuario.status = row.status;
+            usuario.diaSuspensao = row.diaSuspensao;
+            usuario.suspensaoAte = row.suspensaoAte;
+            return usuario;
         });
     }
-    buscarUsuario(cpf) {
+    async buscarUsuario(cpf) {
         if (!Usuario_1.Usuario.validarCPF(cpf)) {
             throw new Error("CPF inválido!");
         }
-        const usuario = this.usuarioRepository.buscarUsuarioPorCPF(cpf);
+        const usuario = await this.usuarioRepository.buscarUsuarioPorCPF(cpf);
         if (!usuario) {
             throw new Error("Usuario não encontrado!");
         }
         return usuario;
     }
-    atualizarUsuario(cpf, novosDados) {
-        const usuario = this.usuarioRepository.buscarUsuarioPorCPF(cpf);
+    async atualizarUsuario(cpf, novosDados) {
+        const usuario = await this.usuarioRepository.buscarUsuarioPorCPF(cpf);
         if (!usuario) {
             throw new Error("Usuário não encontrado!");
         }
@@ -84,35 +84,40 @@ class UsuarioService {
                 throw new Error("Curso Inválido!");
             }
         }
-        const usuarioAtualizado = this.usuarioRepository.atualizarDadosUsuario(cpf, novosDados);
+        usuario.nome = novosDados.nome ?? usuario.nome;
+        usuario.email = novosDados.email ?? usuario.email;
+        usuario.categoriaId = novosDados.categoriaId ?? usuario.categoriaId;
+        usuario.cursoId = novosDados.cursoId ?? usuario.cursoId;
+        usuario.status = novosDados.status ?? usuario.status;
+        usuario.diaSuspensao = novosDados.diaSuspensao ?? usuario.diaSuspensao;
+        usuario.suspensaoAte = novosDados.suspensaoAte ?? usuario.suspensaoAte;
+        const usuarioAtualizado = await this.usuarioRepository.atualizarDadosUsuario(usuario);
         if (!usuarioAtualizado) {
-            throw new Error("Erro inesperado ao atualizar usuário!");
+            throw new Error("Erro inesperado ao atualizar usuário ou usuário não encontrado!");
         }
         return usuarioAtualizado;
     }
-    aplicarSuspensao(cpf, diasAtraso) {
-        const usuario = this.usuarioRepository.buscarUsuarioPorCPF(cpf);
+    async aplicarSuspensao(cpf, diasAtraso) {
+        const usuario = await this.usuarioRepository.buscarUsuarioPorCPF(cpf);
         if (!usuario)
             return;
-        const diasSuspensao = diasAtraso * 3;
-        usuario.diaSuspensao = diasSuspensao;
-        if (diasSuspensao > 60) {
-            usuario.status = "suspenso";
-        }
+        const diasSuspensaoCalculado = diasAtraso * 3;
+        usuario.diaSuspensao = diasSuspensaoCalculado;
         const emprestimos = this.emprestimoRepository.listarPorUsuario(cpf);
-        const atrasados = emprestimos.filter(e => e.diasAtraso && e.diasAtraso > 0);
-        if (diasSuspensao > 60) {
+        const atrasados = emprestimos.filter((e) => e.diasAtraso && e.diasAtraso > 0);
+        if (diasSuspensaoCalculado > 60) {
             usuario.status = "suspenso";
         }
         if (atrasados.length > 2) {
             usuario.status = "inativo";
         }
+        await this.usuarioRepository.atualizarDadosUsuario(usuario);
     }
-    removerUsuario(cpf) {
+    async removerUsuario(cpf) {
         if (!Usuario_1.Usuario.validarCPF(cpf)) {
             throw new Error("CPF Inválido!");
         }
-        const usuario = this.usuarioRepository.buscarUsuarioPorCPF(cpf);
+        const usuario = await this.usuarioRepository.buscarUsuarioPorCPF(cpf);
         if (!usuario) {
             throw new Error("Usuário não encontrado.");
         }
@@ -120,28 +125,29 @@ class UsuarioService {
         if (emprestimosAtivos.length > 0) {
             throw new Error("Usuário não pode ser removido: possui empréstimos em aberto.");
         }
-        const sucesso = this.usuarioRepository.removerUsuario(cpf);
+        const sucesso = await this.usuarioRepository.removerUsuario(cpf);
         if (!sucesso) {
             throw new Error("Erro ao remover usuário.");
         }
+        return sucesso;
     }
-    verificarInativacaoUsuario(cpf) {
-        const usuario = this.usuarioRepository.buscarUsuarioPorCPF(cpf);
+    async verificarInativacaoUsuario(cpf) {
+        const usuario = await this.usuarioRepository.buscarUsuarioPorCPF(cpf);
         if (!usuario)
             return;
-        const emprestimos = this.emprestimoRepository.listarPorUsuario(cpf);
+        const emprestimos = await this.emprestimoRepository.listarPorUsuario(cpf);
         const hoje = new Date();
-        const atrasosGraves = emprestimos.filter(e => {
+        const atrasosGraves = emprestimos.filter((e) => {
             if (!e.dataEntrega && e.dataDevolucao) {
                 const diff = hoje.getTime() - e.dataDevolucao.getTime();
-                const diasAtraso = diff / (1000 * 60 * 60 * 24);
-                return diasAtraso > 60;
+                return diff / (1000 * 60 * 60 * 24) > 60;
             }
             return false;
         });
         if (atrasosGraves.length > 0) {
             usuario.status = "inativo";
             usuario.diaSuspensao = 0;
+            await this.usuarioRepository.atualizarDadosUsuario(usuario);
         }
     }
 }

@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.EstoqueService = void 0;
-const Estoque_1 = require("../model/Estoque");
+const Estoque_1 = require("../model/entity/Estoque");
 const EstoqueRepository_1 = require("../repository/EstoqueRepository");
 const LivroRepository_1 = require("../repository/LivroRepository");
 class EstoqueService {
@@ -24,7 +24,9 @@ class EstoqueService {
         return novoExemplar;
     }
     listarDisponiveis() {
-        return this.estoqueRepository.listarEstoque().filter(e => e.status === "disponivel");
+        return this.estoqueRepository
+            .listarEstoque()
+            .filter((e) => e.status === "disponivel");
     }
     buscarExemplar(codigo) {
         const exemplar = this.estoqueRepository.buscarPorCodigo(codigo);
@@ -56,10 +58,14 @@ class EstoqueService {
         exemplar.quantidade_emprestada = 0;
     }
     existeExemplarDoLivro(isbn) {
-        return this.estoqueRepository.listarEstoque().some((e) => e.livro_isbn === isbn);
+        return this.estoqueRepository
+            .listarEstoque()
+            .some((e) => e.livro_isbn === isbn);
     }
     getResumoEstoque(isbn) {
-        const exemplares = this.estoqueRepository.listarEstoque().filter((e) => e.livro_isbn === isbn);
+        const exemplares = this.estoqueRepository
+            .listarEstoque()
+            .filter((e) => e.livro_isbn === isbn);
         return {
             total: exemplares.length,
             disponiveis: exemplares.filter((e) => e.status === "disponivel").length,

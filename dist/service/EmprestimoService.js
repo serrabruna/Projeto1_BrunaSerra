@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.EmprestimoService = void 0;
-const Emprestimo_1 = require("../model/Emprestimo");
+const Emprestimo_1 = require("../model/entity/Emprestimo");
 const EmprestimoRepository_1 = require("../repository/EmprestimoRepository");
 const UsuarioRepository_1 = require("../repository/UsuarioRepository");
 const EstoqueRepository_1 = require("../repository/EstoqueRepository");
@@ -43,8 +43,13 @@ class EmprestimoService {
         }
         const emprestimosAtivos = this.emprestimoRepository.emprestimosAbertos(cpfUsuario);
         const limiteQtd = categoria.nome === "Professor" ? 5 : 3;
-        const limiteDias = categoria.nome === "Aluno" && livro &&
-            livro.categoriaId === usuario.cursoId ? 30 : categoria.nome === "Aluno" ? 15 : 40;
+        const limiteDias = categoria.nome === "Aluno" &&
+            livro &&
+            livro.categoriaId === usuario.cursoId
+            ? 30
+            : categoria.nome === "Aluno"
+                ? 15
+                : 40;
         if (emprestimosAtivos.length >= limiteQtd) {
             throw new Error("Usuário atingiu o limite de empréstimos!");
         }

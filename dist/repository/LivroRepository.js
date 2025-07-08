@@ -18,8 +18,9 @@ class LivroRepository {
         return this.livros.find((livro) => livro.isbn === isbn);
     }
     buscarLivroPorAutorEditoraEdicao(autor, editora, edicao) {
-        return this.livros.find(livro => livro.autor.toLowerCase() === autor.toLowerCase()
-            && livro.editora.toLowerCase() === editora.toLowerCase() && livro.edicao === edicao);
+        return this.livros.find((livro) => livro.autor.toLowerCase() === autor.toLowerCase() &&
+            livro.editora.toLowerCase() === editora.toLowerCase() &&
+            livro.edicao === edicao);
     }
     listarLivros() {
         return this.livros;
@@ -46,7 +47,7 @@ class LivroRepository {
         return livro;
     }
     removerLivro(isbn) {
-        const index = this.livros.findIndex(l => l.isbn == isbn);
+        const index = this.livros.findIndex((l) => l.isbn == isbn);
         if (index == -1) {
             return false;
         }
