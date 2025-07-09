@@ -57,7 +57,7 @@ export class UsuarioRepository {
     return newUsuario;
   }
 
-  async buscarUsuarioPorCPF(cpf: string): Promise<Usuario | null> {
+  async buscarUsuarioPorCPF(cpf: string): Promise<Usuario | undefined> {
     const resultado = await executarComandoSQL(
       "SELECT * FROM biblioteca.Usuario WHERE cpf = ?",
       [cpf]
@@ -77,7 +77,7 @@ export class UsuarioRepository {
       usuario.suspensaoAte = row.suspensaoAte;
       return usuario;
     }
-    return null;
+    return undefined;
   }
 
   async listarUsuarios(): Promise<Usuario[]> {
@@ -101,7 +101,7 @@ export class UsuarioRepository {
     });
   }
 
-  async atualizarDadosUsuario(usuario: Usuario): Promise<Usuario | null> {
+  async atualizarDadosUsuario(usuario: Usuario): Promise<Usuario | undefined> {
     const query = `
         UPDATE biblioteca.Usuario
         SET nome = ?, email = ?, categoriaId = ?, cursoId = ?, status = ?, diaSuspensao = ?, suspensaoAte = ?
@@ -121,7 +121,7 @@ export class UsuarioRepository {
     if (resultado.affectedRows > 0) {
       return this.buscarUsuarioPorCPF(usuario.cpf);
     }
-    return null;
+    return undefined;
   }
 
   async removerUsuario(cpf: string): Promise<boolean> {

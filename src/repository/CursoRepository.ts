@@ -39,14 +39,14 @@ export class CursoRepository{
 
     async listarCursos(): Promise<Curso[]>{
             const resultado = await executarComandoSQL("SELECT * FROM biblioteca.Curso", []);
-            return resultado.map((row: any) => new Curso(row.nome));
+            return resultado.map((row: any) => new Curso(row.id, row.nome));
         }
     
     async buscarPorId(id: number): Promise <Curso | undefined>{
         const resultado = await executarComandoSQL("SELECT * FROM biblioteca.Curso WHERE id = ?", [id]);
         if (resultado.length > 0) {
             const row = resultado[0];
-            return new Curso(row.nome);
+            return new Curso(row.id, row.nome);
         }
         return undefined;
         }

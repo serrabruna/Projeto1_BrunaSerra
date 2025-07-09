@@ -39,14 +39,14 @@ export class CategoriaUsuarioRepository{
 
     async listarCategorias(): Promise<CategoriaUsuario[]>{
         const resultado = await executarComandoSQL("SELECT * FROM biblioteca.CategoriaUsuario", []);
-        return resultado.map((row: any) => new CategoriaUsuario(row.nome));
+        return resultado.map((row: any) => new CategoriaUsuario(row.id, row.nome));
     }
 
     async buscarPorId(id: number): Promise <CategoriaUsuario | undefined>{
         const resultado = await executarComandoSQL("SELECT * FROM biblioteca.CategoriaUsuario WHERE id = ?", [id]);
         if (resultado.length > 0) {
             const row = resultado[0];
-            return new CategoriaUsuario(row.nome);
+            return new CategoriaUsuario(row.id, row.nome);
         }
         return undefined;
     }

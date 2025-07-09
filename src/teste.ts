@@ -1,13 +1,16 @@
-import { UsuarioRepository } from "./repository/UsuarioRepository";
-import { CategoriaUsuarioRepository } from "./repository/CategoriaUsuarioRepository";
-import { CursoRepository } from "./repository/CursoRepository";
+import { LivroRepository } from "./repository/LivroRepository";
 
 async function main() {
-    const curso = new CursoRepository();
+    const livro = new LivroRepository();
 
-    await curso.createTable();
-    await curso.insertCurso(
-        "ADS"
+    await livro.createTable();
+    await livro.insertLivro(
+        "123456789023",
+        "The Outsider",
+        "Stephen King",
+        "Darkside",
+        "2",
+        1
     )
 }
 

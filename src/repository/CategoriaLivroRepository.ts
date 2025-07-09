@@ -39,14 +39,14 @@ export class CategoriaLivroRepository{
 
     async listarCategorias(): Promise<CategoriaLivro[]>{
         const resultado = await executarComandoSQL("SELECT * FROM biblioteca.CategoriaLivro", []);
-        return resultado.map((row: any) => new CategoriaLivro(row.nome));
+        return resultado.map((row: any) => new CategoriaLivro(row.id, row.nome));
     }
 
     async buscarPorId(id: number): Promise<CategoriaLivro | undefined>{
         const resultado = await executarComandoSQL("SELECT * FROM biblioteca.CategoriaLivro WHERE id = ?", [id]);
         if (resultado.length > 0) {
             const row = resultado[0];
-            return new CategoriaLivro(row.nome);
+            return new CategoriaLivro(row.id, row.nome);
         }
         return undefined;
     }
