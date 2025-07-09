@@ -3,11 +3,6 @@ import { executarComandoSQL } from "../database/mysql";
 
 export class CategoriaUsuarioRepository{
     private static instance: CategoriaUsuarioRepository;
-    private categorias: CategoriaUsuario[] = [
-        new CategoriaUsuario(1, "Professor"),
-        new CategoriaUsuario(2, "Aluno"),
-        new CategoriaUsuario(3, "Bibliotecário")
-    ];
 
     constructor(){}
 

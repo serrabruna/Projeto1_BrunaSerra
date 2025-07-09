@@ -19,11 +19,44 @@ export class CategoriaLivroRepository{
         return this.instance;
     }
 
-    listarCategorias(): CategoriaLivro[]{
-            return this.categorias;
+    async createTable(){
+        const query = ` CREATE TABLE IF NOT EXISTS biblioteca.CategoriaUsuario (
+            id INT PRIMARY KEY,
+            nome VARCHAR(255) NOT NULL UNIQUE
+            )`;
+        try {
+            const resultado = await executarComandoSQL(query, []);
+            console.log("Tabela CategoriaLivro criada com sucesso:", resultado);
+        } catch (err) {
+            console.error("Erro ao executar a query:", err);
+        }
     }
 
-    buscarPorId(id: number): CategoriaLivro | undefined{
-            return this.categorias.find(cat => cat.id === id);
+    async insertCategoriaLivro(
+        id: number,
+        nome: string,
+        ): Promise<CategoriaLivro> {
+        const resultado = await executarComandoSQL(
+            "INSERT INTO biblioteca.CategoriaLivro (id, nome) VALUES (?, ?)",
+            [id, nome]
+        );
+        const newCategoriaLivro = new CategoriaLivro(id, nome);
+        newCategoriaLivro.id = resultado.insertId;
+        +console.log("Categoria de livro inserida com sucesso:", newCategoriaLivro);
+        return newCategoriaLivro;
+    }
+
+    async listarCategorias(): Promise<CategoriaLivro[]>{
+        const resultado = await executarComandoSQL("SELECT * FROM biblioteca.CategoriaLivro", []);
+        return resultado.map((row: any) => new CategoriaLivro(row.id, row.nome));
+    }
+
+    async buscarPorId(id: number): Promise<CategoriaLivro | undefined>{
+        const resultado = await executarComandoSQL("SELECT * FROM biblioteca.CategoriaLivro WHERE id = ?", [id]);
+        if (resultado.length > 0) {
+            const row = resultado[0];
+            return new CategoriaLivro(row.id, row.nome);
+        }
+        return undefined;
     }
 }
