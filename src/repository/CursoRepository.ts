@@ -21,7 +21,7 @@ export class CursoRepository{
         try {
             const resultado = await executarComandoSQL(query, []);
             console.log("Tabela Curso criada com sucesso:", resultado);
-            } catch (err) {
+        } catch (err) {
                 console.error("Erro ao executar a query:", err);
             }
     }

@@ -1,10 +1,10 @@
 import { Estoque } from "../model/entity/Estoque";
+import { executarComandoSQL } from "../database/mysql";
 
 export class EstoqueRepository {
   private static instance: EstoqueRepository;
-  private exemplares: Estoque[] = [];
 
-  private constructor() {}
+  constructor() {}
 
   public static getInstance(): EstoqueRepository {
     if (!this.instance) {
@@ -13,37 +13,129 @@ export class EstoqueRepository {
     return this.instance;
   }
 
-  inserirExemplar(exemplar: Estoque) {
-    this.exemplares.push(exemplar);
+  async createTable(){
+      const query = `CREATE TABLE IF NOT EXISTS biblioteca.Estoque (
+          codigo INT AUTO_INCREMENT PRIMARY KEY,
+          livro_isbn VARCHAR(13) NOT NULL,
+          quantidade INT NOT NULL,
+          quantidade_emprestada INT DEFAULT 0,
+          status ENUM('disponivel', 'emprestado') DEFAULT 'disponivel',
+          FOREIGN KEY (livro_isbn) REFERENCES biblioteca.Livro(isbn)
+      )`
+      try {
+          await executarComandoSQL(query, []);
+          console.log("Tabela Estoque criada com sucesso.");
+      }catch (err) {
+        console.error("Erro ao criar a tabela Estoque:", err);
+      }   
   }
 
-  buscarPorISBN(isbn: string): Estoque | undefined {
-    return this.exemplares.find((exemplar) => exemplar.livro_isbn === isbn);
+  async insertExemplar(livro_isbn: string, quantidade: number, quantidade_emprestada: number): Promise<Estoque>{
+      try {
+          const resultado: any = await executarComandoSQL(
+              "INSERT INTO biblioteca.Estoque (livro_isbn, quantidade, quantidade_emprestada, status) VALUES (?, ?, ?, 'disponivel')",
+              [livro_isbn, quantidade, quantidade_emprestada]
+          );
+          const newExemplar = new Estoque(livro_isbn, quantidade, quantidade_emprestada, resultado.insertId);
+          console.log("Exemplar inserido com sucesso:", newExemplar);
+          return newExemplar;
+      }catch (err) {
+          console.error("Erro ao inserir exemplar:", err);
+          throw err;
+      }
   }
 
-  buscarPorCodigo(codigo: number): Estoque | undefined {
-    return this.exemplares.find((exemplar) => exemplar.codigo === codigo);
+
+  async buscarPorISBN(isbn: string): Promise<Estoque | undefined> {
+        try {
+            const resultado: any[] = await executarComandoSQL(
+                "SELECT * FROM biblioteca.Estoque WHERE livro_isbn = ?",
+                [isbn]
+            );
+            if (resultado.length > 0) {
+                const row = resultado[0];
+                return new Estoque(
+                    row.livro_isbn,
+                    row.quantidade,
+                    row.quantidade_emprestada,
+                    row.codigo
+                );
+            }
+            return undefined;
+        } catch (err) {
+            console.error("Erro ao buscar estoque por ISBN:", err);
+            throw err;
+        }
   }
 
-  listarEstoque(): Estoque[] {
-    return this.exemplares;
-  }
+  async buscarPorCodigo(codigo: number): Promise<Estoque | undefined> {
+        try {
+            const resultado: any[] = await executarComandoSQL(
+                "SELECT * FROM biblioteca.Estoque WHERE codigo = ?",
+                [codigo]
+            );
+            if (resultado.length > 0) {
+                const row = resultado[0];
+                return new Estoque(
+                    row.livro_isbn,
+                    row.quantidade,
+                    row.quantidade_emprestada,
+                    row.codigo
+                );
+            }
+            return undefined;
+        } catch (err) {
+            console.error("Erro ao buscar estoque por código:", err);
+            throw err;
+        }
+    }
+  async listarEstoque(): Promise<Estoque[]> {
+        try {
+            const resultado: any[] = await executarComandoSQL("SELECT * FROM biblioteca.Estoque", []);
+            return resultado.map((row: any) => new Estoque(
+                row.livro_isbn,
+                row.quantidade,
+                row.quantidade_emprestada,
+                row.codigo
+            ));
+        } catch (err) {
+            console.error("Erro ao listar estoque:", err);
+            throw err;
+        }
+    }
 
-  atualizarStatus(
-    codigo: number,
-    status: "emprestado" | "disponivel"
-  ): boolean {
-    const exemplar = this.buscarPorCodigo(codigo);
-    if (!exemplar) return false;
-    exemplar.status = status;
-    return true;
-  }
+    async atualizarDadosEstoque(estoque: Estoque): Promise<Estoque | undefined> {
+        const query = `UPDATE biblioteca.Estoque SET quantidade = ?, quantidade_emprestada = ?, status = ?
+            WHERE codigo = ?`;
+        
+        try {
+            const resultado: any = await executarComandoSQL(query, [
+                estoque.quantidade,
+                estoque.quantidade_emprestada,
+                estoque.status,
+                estoque.codigo
+            ]);
+            if (resultado.affectedRows > 0) {
+                // Retorna o estado atualizado do estoque do BD
+                return this.buscarPorCodigo(estoque.codigo!); // 'codigo!' afirma que não será undefined
+            }
+            return undefined; // Retorna undefined se o registro não for encontrado/afetado
+        } catch (err) {
+            console.error("Erro ao atualizar dados do estoque:", err);
+            throw err;
+        }
+    }
 
-  remover(codigo: number): boolean {
-    const index = this.exemplares.findIndex((e) => e.codigo === codigo);
-    if (index === -1) return false;
-
-    this.exemplares.splice(index, 1);
-    return true;
-  }
+    async remover(codigo: number): Promise<boolean> {
+        try {
+            const resultado: any = await executarComandoSQL(
+                "DELETE FROM biblioteca.Estoque WHERE codigo = ?",
+                [codigo]
+            );
+            return resultado.affectedRows > 0;
+        } catch (err) {
+            console.error("Erro ao remover estoque:", err);
+            throw err;
+        }
+    }
 }

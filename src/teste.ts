@@ -1,16 +1,13 @@
-import { LivroRepository } from "./repository/LivroRepository";
+import { EstoqueRepository } from "./repository/EstoqueRepository";
 
 async function main() {
-    const livro = new LivroRepository();
+    const exemplar = new EstoqueRepository();
 
-    await livro.createTable();
-    await livro.insertLivro(
+    await exemplar.createTable();
+    await exemplar.insertExemplar(
         "123456789023",
-        "The Outsider",
-        "Stephen King",
-        "Darkside",
-        "2",
-        1
+        1,
+        0
     )
 }
 
