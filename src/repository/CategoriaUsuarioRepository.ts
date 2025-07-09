@@ -15,7 +15,7 @@ export class CategoriaUsuarioRepository{
 
     async createTable() {
         const query = ` CREATE TABLE IF NOT EXISTS biblioteca.CategoriaUsuario (
-            id INT PRIMARY KEY,
+            id INT PRIMARY KEY AUTO_INCREMENT,
             nome VARCHAR(255) NOT NULL UNIQUE
             )`;
         try {
@@ -26,15 +26,12 @@ export class CategoriaUsuarioRepository{
         }
     }
 
-    async insertCategoriaUsuario(
-        id: number,
-        nome: string,
-        ): Promise<CategoriaUsuario> {
+    async insertCategoriaUsuario(nome: string): Promise<CategoriaUsuario> {
         const resultado = await executarComandoSQL(
-            "INSERT INTO biblioteca.CategoriaUsuario (id, nome) VALUES (?, ?)",
-            [id, nome]
+            "INSERT INTO biblioteca.CategoriaUsuario (nome) VALUES (?)",
+            [nome]
         );
-        const newCategoriaUsuario = new CategoriaUsuario(id, nome);
+        const newCategoriaUsuario = new CategoriaUsuario(nome);
         newCategoriaUsuario.id = resultado.insertId;
         +console.log("Categoria de usuario inserida com sucesso:", newCategoriaUsuario);
         return newCategoriaUsuario;
@@ -42,14 +39,14 @@ export class CategoriaUsuarioRepository{
 
     async listarCategorias(): Promise<CategoriaUsuario[]>{
         const resultado = await executarComandoSQL("SELECT * FROM biblioteca.CategoriaUsuario", []);
-        return resultado.map((row: any) => new CategoriaUsuario(row.id, row.nome));
+        return resultado.map((row: any) => new CategoriaUsuario(row.nome));
     }
 
     async buscarPorId(id: number): Promise <CategoriaUsuario | undefined>{
         const resultado = await executarComandoSQL("SELECT * FROM biblioteca.CategoriaUsuario WHERE id = ?", [id]);
         if (resultado.length > 0) {
             const row = resultado[0];
-            return new CategoriaUsuario(row.id, row.nome);
+            return new CategoriaUsuario(row.nome);
         }
         return undefined;
     }

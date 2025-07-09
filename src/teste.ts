@@ -6,7 +6,6 @@ async function main() {
 
     await catUsu.createTable();
     await catUsu.insertCategoriaUsuario(
-        1,
         "Professor"
     )
 }
