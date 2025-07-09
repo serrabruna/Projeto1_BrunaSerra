@@ -131,29 +131,25 @@ export class LivroService {
       throw new Error("Livro não encontrado.");
     }
 
-    const exemplares = await this.estoqueRepository.listarEstoque().filter((e) => e.livro_isbn === isbn);
-    if (exemplares.length > 0) {
+    const todosOsExemplares = await this.estoqueRepository.listarEstoque();
+    const exemplaresVinculadosAoLivro = todosOsExemplares.filter((e) => e.livro_isbn === isbn);
+
+    if (exemplaresVinculadosAoLivro.length > 0) {
       throw new Error("Não é possível remover o livro: existem exemplares vinculados no estoque.");
     }
 
     const emprestimos = await this.emprestimoRepository.listarEmprestimos();
-    const emprestimosAtivos = emprestimos.filter((e) => {
-      const exemplar = this.estoqueRepository.buscarPorCodigo(e.codigoExemplar);
-      return exemplar && exemplar.livro_isbn === isbn && !e.dataEntrega;
-    });
-
-    if (emprestimosAtivos.length > 0) {
-      throw new Error(
-        "Não é possível remover o livro: existem empréstimos ativos."
-      );
-    }
-    if (await this.estoqueService.existeExemplarDoLivro(isbn)) {
-      throw new Error("Não é possível remover o livro: existem exemplares vinculados.");
+    if (exemplaresVinculadosAoLivro.length > 0) {
+        const temExemplarEmprestado = exemplaresVinculadosAoLivro.some(e => e.status === 'emprestado');
+        if (temExemplarEmprestado) {
+            throw new Error("Não é possível remover o livro: existem exemplares emprestados no estoque.");
+        }
+        throw new Error("Não é possível remover o livro: existem exemplares vinculados no estoque (não emprestados).");
     }
 
     const removido = await this.livroRepository.removerLivro(isbn);
     if (!removido) {
-        throw new Error("Erro inesperado ao remover livro!");
+        throw new Error("Erro inesperado ao remover livro ou livro não encontrado no repositório.");
     }
   }
 }
