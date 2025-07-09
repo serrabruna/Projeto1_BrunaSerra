@@ -1,9 +1,8 @@
 export class Curso{
-    id: number;
+    id?: number;
     nome: string;
 
-    constructor(id:number, nome: string){
-        this.id = id;
+    constructor(nome: string){
         this. nome = nome;
     }
 

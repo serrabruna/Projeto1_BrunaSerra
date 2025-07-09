@@ -1,12 +1,13 @@
 import { UsuarioRepository } from "./repository/UsuarioRepository";
 import { CategoriaUsuarioRepository } from "./repository/CategoriaUsuarioRepository";
+import { CursoRepository } from "./repository/CursoRepository";
 
 async function main() {
-    const catUsu = new CategoriaUsuarioRepository();
+    const curso = new CursoRepository();
 
-    await catUsu.createTable();
-    await catUsu.insertCategoriaUsuario(
-        "Professor"
+    await curso.createTable();
+    await curso.insertCurso(
+        "ADS"
     )
 }
 
