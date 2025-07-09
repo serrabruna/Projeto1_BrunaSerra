@@ -1,4 +1,5 @@
-import mysql, {Connection, QueryError} from 'mysql2';
+import * as mysql from 'mysql2';
+import { Connection, QueryError } from 'mysql2';
 
 const dbConfig = {
     host: 'localhost',

@@ -20,8 +20,7 @@ export class UsuarioService {
     usuarioRepository: UsuarioRepository = UsuarioRepository.getInstance();
     categoriaService = new CategoriaUsuarioService();
     cursoService = new CursoService();
-    emprestimoRepository: EmprestimoRepository =
-    EmprestimoRepository.getInstance();
+    emprestimoRepository: EmprestimoRepository = EmprestimoRepository.getInstance();
 
     async cadastrarUsuario(usuarioData: any): Promise<Usuario> {
         const { cpf, nome, email, categoriaId, cursoId } = usuarioData;
@@ -37,7 +36,7 @@ export class UsuarioService {
             throw new Error("CPF já cadastrado");
         }
 
-        const categoria = this.categoriaService.buscarPorId(categoriaId);
+        const categoria = await this.categoriaService.buscarPorId(categoriaId);
         if (!categoria) {
             throw new Error("Categoria inválida!");
         }
@@ -115,7 +114,7 @@ export class UsuarioService {
         }
 
         if (novosDados.categoriaId) {
-            const categoria = this.categoriaService.buscarPorId(novosDados.categoriaId);
+            const categoria = await this.categoriaService.buscarPorId(novosDados.categoriaId);
             if (!categoria) {
                 throw new Error("Categoria Inválida!");
             }
@@ -189,7 +188,7 @@ export class UsuarioService {
         const usuario = await this.usuarioRepository.buscarUsuarioPorCPF(cpf);
         if (!usuario) return;
 
-        const emprestimos = await this.emprestimoRepository.listarPorUsuario(cpf);
+        const emprestimos = this.emprestimoRepository.listarPorUsuario(cpf);
         const hoje = new Date();
 
         const atrasosGraves = emprestimos.filter((e) => {

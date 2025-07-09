@@ -24,7 +24,7 @@ class UsuarioService {
         if (existente) {
             throw new Error("CPF já cadastrado");
         }
-        const categoria = this.categoriaService.buscarPorId(categoriaId);
+        const categoria = await this.categoriaService.buscarPorId(categoriaId);
         if (!categoria) {
             throw new Error("Categoria inválida!");
         }
@@ -73,7 +73,7 @@ class UsuarioService {
             throw new Error("Não é permitido alterar o CPF!");
         }
         if (novosDados.categoriaId) {
-            const categoria = this.categoriaService.buscarPorId(novosDados.categoriaId);
+            const categoria = await this.categoriaService.buscarPorId(novosDados.categoriaId);
             if (!categoria) {
                 throw new Error("Categoria Inválida!");
             }
@@ -135,7 +135,7 @@ class UsuarioService {
         const usuario = await this.usuarioRepository.buscarUsuarioPorCPF(cpf);
         if (!usuario)
             return;
-        const emprestimos = await this.emprestimoRepository.listarPorUsuario(cpf);
+        const emprestimos = this.emprestimoRepository.listarPorUsuario(cpf);
         const hoje = new Date();
         const atrasosGraves = emprestimos.filter((e) => {
             if (!e.dataEntrega && e.dataDevolucao) {

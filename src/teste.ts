@@ -1,17 +1,14 @@
 import { UsuarioRepository } from "./repository/UsuarioRepository";
+import { CategoriaUsuarioRepository } from "./repository/CategoriaUsuarioRepository";
 
 async function main() {
-    const repo = new UsuarioRepository();
+    const catUsu = new CategoriaUsuarioRepository();
 
-    await repo.createTable();
-
-    await repo.insertUsuario(
-        "20799319031",
-        "João da Silva",
-        "joao@ifsp.edu.br",
-        1, 
-        2  
-    );
+    await catUsu.createTable();
+    await catUsu.insertCategoriaUsuario(
+        1,
+        "Professor"
+    )
 }
 
 main();

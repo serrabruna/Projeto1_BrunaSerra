@@ -9,7 +9,7 @@ export class CategoriaUsuarioRepository{
         new CategoriaUsuario(3, "Bibliotecário")
     ];
 
-    private constructor(){}
+    constructor(){}
 
     public static getInstance(): CategoriaUsuarioRepository {
         if(!this.instance){
@@ -31,12 +31,12 @@ export class CategoriaUsuarioRepository{
         }
     }
 
-    async insertUsuario(
+    async insertCategoriaUsuario(
         id: number,
         nome: string,
         ): Promise<CategoriaUsuario> {
         const resultado = await executarComandoSQL(
-            "INSERT INTO biblioteca.Usuario (id, nome) VALUES (?, ?)",
+            "INSERT INTO biblioteca.CategoriaUsuario (id, nome) VALUES (?, ?)",
             [id, nome]
         );
         const newCategoriaUsuario = new CategoriaUsuario(id, nome);

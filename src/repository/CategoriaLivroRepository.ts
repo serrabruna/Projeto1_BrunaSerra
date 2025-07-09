@@ -1,4 +1,5 @@
 import { CategoriaLivro } from "../model/entity/CategoriaLivro";
+import { executarComandoSQL } from "../database/mysql";
 
 export class CategoriaLivroRepository{
     private static instance: CategoriaLivroRepository;

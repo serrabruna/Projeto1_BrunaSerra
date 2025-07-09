@@ -1,9 +1,9 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const UsuarioRepository_1 = require("./repository/UsuarioRepository");
+const CategoriaUsuarioRepository_1 = require("./repository/CategoriaUsuarioRepository");
 async function main() {
-    const repo = new UsuarioRepository_1.UsuarioRepository();
-    await repo.createTable();
-    await repo.insertUsuario("20799319031", "João da Silva", "joao@ifsp.edu.br", 1, 2);
+    const catUsu = new CategoriaUsuarioRepository_1.CategoriaUsuarioRepository();
+    await catUsu.createTable();
+    await catUsu.insertCategoriaUsuario(1, "Professor");
 }
 main();
