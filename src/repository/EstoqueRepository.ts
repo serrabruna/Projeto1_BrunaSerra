@@ -15,7 +15,7 @@ export class EstoqueRepository {
 
   async createTable(){
       const query = `CREATE TABLE IF NOT EXISTS biblioteca.Estoque (
-          codigo INT AUTO_INCREMENT PRIMARY KEY,
+          codigo INT PRIMARY KEY,
           livro_isbn VARCHAR(13) NOT NULL,
           quantidade INT NOT NULL,
           quantidade_emprestada INT DEFAULT 0,
@@ -30,13 +30,13 @@ export class EstoqueRepository {
       }   
   }
 
-  async insertExemplar(livro_isbn: string, quantidade: number, quantidade_emprestada: number): Promise<Estoque>{
+  async insertExemplar(codigo: number, livro_isbn: string, quantidade: number, quantidade_emprestada: number): Promise<Estoque>{
       try {
           const resultado: any = await executarComandoSQL(
-              "INSERT INTO biblioteca.Estoque (livro_isbn, quantidade, quantidade_emprestada, status) VALUES (?, ?, ?, 'disponivel')",
-              [livro_isbn, quantidade, quantidade_emprestada]
+              "INSERT INTO biblioteca.Estoque (codigo, livro_isbn, quantidade, quantidade_emprestada, status) VALUES (?, ?, ?, ?, 'disponivel')",
+              [codigo, livro_isbn, quantidade, quantidade_emprestada]
           );
-          const newExemplar = new Estoque(livro_isbn, quantidade, quantidade_emprestada, resultado.insertId);
+          const newExemplar = new Estoque(codigo, livro_isbn, quantidade, quantidade_emprestada);
           console.log("Exemplar inserido com sucesso:", newExemplar);
           return newExemplar;
       }catch (err) {

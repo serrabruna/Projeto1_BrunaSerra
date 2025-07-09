@@ -8,15 +8,13 @@ import { UsuarioService } from "./UsuarioService";
 import { EstoqueService } from "./EstoqueService";
 
 export class EmprestimoService {
-  emprestimoRepository: EmprestimoRepository =
-    EmprestimoRepository.getInstance();
+  emprestimoRepository: EmprestimoRepository = EmprestimoRepository.getInstance();
   usuarioRepository: UsuarioRepository = UsuarioRepository.getInstance();
   estoqueRepository: EstoqueRepository = EstoqueRepository.getInstance();
-  catUsuRepository: CategoriaUsuarioRepository =
-    CategoriaUsuarioRepository.getInstance();
+  catUsuRepository: CategoriaUsuarioRepository = CategoriaUsuarioRepository.getInstance();
   livroRepository: LivroRepository = LivroRepository.getInstance();
-  usuarioService = new UsuarioService();
-  estoqueService = new EstoqueService();
+  usuarioService: UsuarioService = new UsuarioService();
+  estoqueService: EstoqueService = new EstoqueService();
 
   registrarEmprestimo(cpfUsuario: string, codigoExemplar: number): Emprestimo {
     const usuario = this.usuarioRepository.buscarUsuarioPorCPF(cpfUsuario);
