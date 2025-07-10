@@ -4,8 +4,7 @@ exports.CategoriaUsuario = void 0;
 class CategoriaUsuario {
     id;
     nome;
-    constructor(id, nome) {
-        this.id = id;
+    constructor(nome, id) {
         this.nome = nome;
     }
 }

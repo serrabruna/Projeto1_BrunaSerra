@@ -4,8 +4,7 @@ exports.Curso = void 0;
 class Curso {
     id;
     nome;
-    constructor(id, nome) {
-        this.id = id;
+    constructor(nome, id) {
         this.nome = nome;
     }
 }

@@ -3,7 +3,6 @@ import { UsuarioRepository } from "../repository/UsuarioRepository";
 import { CategoriaUsuarioService } from "./CategoriaUsuarioService";
 import { CursoService } from "./CursoService";
 import { EmprestimoRepository } from "../repository/EmprestimoRepository";
-import { executarComandoSQL } from "../database/mysql";
 
 type DadosAtualizacaoUsuario = {
     cpf?: string;

@@ -36,7 +36,7 @@ export class EmprestimoRepository {
         }
     }
 
-    async inserirEmprestimo(emprestimo: Emprestimo): Promise<Emprestimo> { // Renomeado de 'inserir'
+    async insertEmprestimo(emprestimo: Emprestimo): Promise<Emprestimo> {
       try {
           const dataEmprestimoISO = emprestimo.dataEmprestimo.toISOString().slice(0, 19).replace('T', ' ');
           const dataDevolucaoPrevistaISO = emprestimo.dataDevolucaoPrevista.toISOString().slice(0, 19).replace('T', ' ');
@@ -132,6 +132,39 @@ export class EmprestimoRepository {
         throw err;
         }
   }
+
+  async atualizarEmprestimo(emprestimo: Emprestimo): Promise<Emprestimo | undefined> {
+        const dataEmprestimoISO = emprestimo.dataEmprestimo.toISOString().slice(0, 19).replace('T', ' '); //
+        const dataDevolucaoPrevistaISO = emprestimo.dataDevolucaoPrevista.toISOString().slice(0, 19).replace('T', ' '); //
+        const dataEntregaISO = emprestimo.dataEntrega ? emprestimo.dataEntrega.toISOString().slice(0, 19).replace('T', ' ') : null; //
+        const suspensaoAteISO = emprestimo.suspensaoAte ? emprestimo.suspensaoAte.toISOString().slice(0, 19).replace('T', ' ') : null; //
+
+        const query = `UPDATE biblioteca.Emprestimo
+            SET cpfUsuario = ?, usuarioId = ?, codigoExemplar = ?, dataEmprestimo = ?, dataDevolucaoPrevista = ?, dataEntrega = ?, diasAtraso = ?, suspensaoAte = ?
+            WHERE id = ?`;
+
+        try { 
+            const resultado: any = await executarComandoSQL(query, [ 
+                emprestimo.cpfUsuario, 
+                emprestimo.usuarioId, 
+                emprestimo.codigoExemplar,
+                dataEmprestimoISO, 
+                dataDevolucaoPrevistaISO, 
+                dataEntregaISO,
+                emprestimo.diasAtraso || 0, 
+                suspensaoAteISO, 
+                emprestimo.id 
+            ]); 
+            if (resultado.affectedRows > 0) { 
+                return this.buscarEmprestimoPorId(emprestimo.id!);
+            } 
+            return undefined; 
+        } catch (err) { 
+            console.error("Erro ao atualizar empréstimo:", err); 
+            throw err; 
+        } 
+  }
+
 
   async emprestimosAbertos(cpfUsuario: string): Promise<Emprestimo[]> {
     try {

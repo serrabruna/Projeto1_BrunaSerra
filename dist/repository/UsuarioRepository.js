@@ -56,7 +56,7 @@ class UsuarioRepository {
             usuario.suspensaoAte = row.suspensaoAte;
             return usuario;
         }
-        return null;
+        return undefined;
     }
     async listarUsuarios() {
         const resultado = await (0, mysql_1.executarComandoSQL)("SELECT * FROM biblioteca.Usuario", []);
@@ -87,7 +87,7 @@ class UsuarioRepository {
         if (resultado.affectedRows > 0) {
             return this.buscarUsuarioPorCPF(usuario.cpf);
         }
-        return null;
+        return undefined;
     }
     async removerUsuario(cpf) {
         const resultado = await (0, mysql_1.executarComandoSQL)("DELETE FROM biblioteca.Usuario WHERE cpf = ?", [cpf]);

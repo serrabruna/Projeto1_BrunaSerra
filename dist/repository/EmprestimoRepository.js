@@ -1,9 +1,10 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.EmprestimoRepository = void 0;
+const Emprestimo_1 = require("../model/entity/Emprestimo");
+const mysql_1 = require("../database/mysql");
 class EmprestimoRepository {
     static instance;
-    emprestimos = [];
     constructor() { }
     static getInstance() {
         if (!this.instance) {
@@ -11,28 +12,127 @@ class EmprestimoRepository {
         }
         return this.instance;
     }
-    inserir(emprestimo) {
-        this.emprestimos.push(emprestimo);
-    }
-    listarEmprestimos() {
-        return this.emprestimos;
-    }
-    buscarEmprestimoPorId(id) {
-        return this.emprestimos.find((e) => e.id === id);
-    }
-    registrarDevolucao(id, data) {
-        const emprestimo = this.buscarEmprestimoPorId(id);
-        if (emprestimo && !emprestimo.dataEntrega) {
-            emprestimo.dataEntrega = data;
-            return true;
+    async createTable() {
+        const query = `CREATE TABLE IF NOT EXISTS biblioteca.Emprestimo (
+                id INT AUTO_INCREMENT PRIMARY KEY,
+                cpfUsuario VARCHAR(11) NOT NULL,
+                usuarioId INT NOT NULL,
+                codigoExemplar INT NOT NULL,
+                dataEmprestimo DATETIME NOT NULL,
+                dataDevolucaoPrevista DATETIME NOT NULL,
+                dataEntrega DATETIME,
+                diasAtraso INT DEFAULT 0,
+                suspensaoAte DATETIME, 
+                FOREIGN KEY (usuarioId) REFERENCES biblioteca.Usuario(id),
+                FOREIGN KEY (codigoExemplar) REFERENCES biblioteca.Estoque(codigo)
+            )`;
+        try {
+            await (0, mysql_1.executarComandoSQL)(query, []);
+            console.log("Tabela Emprestimo criada com sucesso.");
         }
-        return false;
+        catch (err) {
+            console.error("Erro ao criar a tabela Emprestimo:", err);
+            throw err;
+        }
     }
-    listarPorUsuario(cpf) {
-        return this.emprestimos.filter((e) => e.cpfUsuario === cpf);
+    async insertEmprestimo(emprestimo) {
+        try {
+            const dataEmprestimoISO = emprestimo.dataEmprestimo.toISOString().slice(0, 19).replace('T', ' ');
+            const dataDevolucaoPrevistaISO = emprestimo.dataDevolucaoPrevista.toISOString().slice(0, 19).replace('T', ' ');
+            const dataEntregaISO = emprestimo.dataEntrega ? emprestimo.dataEntrega.toISOString().slice(0, 19).replace('T', ' ') : null;
+            const suspensaoAteISO = emprestimo.suspensaoAte ? emprestimo.suspensaoAte.toISOString().slice(0, 19).replace('T', ' ') : null;
+            const resultado = await (0, mysql_1.executarComandoSQL)("INSERT INTO biblioteca.Emprestimo (cpfUsuario, usuarioId, codigoExemplar, dataEmprestimo, dataDevolucaoPrevista, dataEntrega, diasAtraso, suspensaoAte) VALUES (?, ?, ?, ?, ?, ?, ?, ?)", [
+                emprestimo.cpfUsuario,
+                emprestimo.usuarioId,
+                emprestimo.codigoExemplar,
+                dataEmprestimoISO,
+                dataDevolucaoPrevistaISO,
+                dataEntregaISO,
+                emprestimo.diasAtraso || 0,
+                suspensaoAteISO
+            ]);
+            emprestimo.id = resultado.insertId;
+            console.log("Empréstimo inserido com sucesso:", emprestimo);
+            return emprestimo;
+        }
+        catch (err) {
+            console.error("Erro ao inserir empréstimo:", err);
+            throw err;
+        }
     }
-    emprestimosAbertos(cpf) {
-        return this.emprestimos.filter((e) => e.cpfUsuario === cpf && !e.dataEntrega);
+    async listarEmprestimos() {
+        try {
+            const resultado = await (0, mysql_1.executarComandoSQL)("SELECT * FROM biblioteca.Emprestimo", []);
+            return resultado.map((row) => new Emprestimo_1.Emprestimo(row.cpfUsuario, row.usuarioId, row.codigoExemplar, new Date(row.dataEmprestimo), new Date(row.dataDevolucaoPrevista), row.dataEntrega ? new Date(row.dataEntrega) : undefined, row.diasAtraso, row.suspensaoAte ? new Date(row.suspensaoAte) : undefined, row.id));
+        }
+        catch (err) {
+            console.error("Erro ao listar empréstimos:", err);
+            throw err;
+        }
+    }
+    async buscarEmprestimoPorId(id) {
+        try {
+            const resultado = await (0, mysql_1.executarComandoSQL)("SELECT * FROM biblioteca.Emprestimo WHERE id = ?", [id]);
+            if (resultado.length > 0) {
+                const row = resultado[0];
+                return new Emprestimo_1.Emprestimo(row.cpfUsuario, row.usuarioId, row.codigoExemplar, new Date(row.dataEmprestimo), new Date(row.dataDevolucaoPrevista), row.dataEntrega ? new Date(row.dataEntrega) : undefined, row.diasAtraso, row.suspensaoAte ? new Date(row.suspensaoAte) : undefined, row.id);
+            }
+            return undefined;
+        }
+        catch (err) {
+            console.error("Erro ao buscar empréstimo por ID:", err);
+            throw err;
+        }
+    }
+    async listarPorUsuario(cpfUsuario) {
+        try {
+            const resultado = await (0, mysql_1.executarComandoSQL)("SELECT * FROM biblioteca.Emprestimo WHERE cpfUsuario = ?", [cpfUsuario]);
+            return resultado.map((row) => new Emprestimo_1.Emprestimo(row.cpfUsuario, row.usuarioId, row.codigoExemplar, new Date(row.dataEmprestimo), new Date(row.dataDevolucaoPrevista), row.dataEntrega ? new Date(row.dataEntrega) : undefined, row.diasAtraso, row.suspensaoAte ? new Date(row.suspensaoAte) : undefined, row.id));
+        }
+        catch (err) {
+            console.error("Erro ao listar empréstimos por usuário:", err);
+            throw err;
+        }
+    }
+    async atualizarEmprestimo(emprestimo) {
+        const dataEmprestimoISO = emprestimo.dataEmprestimo.toISOString().slice(0, 19).replace('T', ' '); //
+        const dataDevolucaoPrevistaISO = emprestimo.dataDevolucaoPrevista.toISOString().slice(0, 19).replace('T', ' '); //
+        const dataEntregaISO = emprestimo.dataEntrega ? emprestimo.dataEntrega.toISOString().slice(0, 19).replace('T', ' ') : null; //
+        const suspensaoAteISO = emprestimo.suspensaoAte ? emprestimo.suspensaoAte.toISOString().slice(0, 19).replace('T', ' ') : null; //
+        const query = `UPDATE biblioteca.Emprestimo
+            SET cpfUsuario = ?, usuarioId = ?, codigoExemplar = ?, dataEmprestimo = ?, dataDevolucaoPrevista = ?, dataEntrega = ?, diasAtraso = ?, suspensaoAte = ?
+            WHERE id = ?`;
+        try {
+            const resultado = await (0, mysql_1.executarComandoSQL)(query, [
+                emprestimo.cpfUsuario,
+                emprestimo.usuarioId,
+                emprestimo.codigoExemplar,
+                dataEmprestimoISO,
+                dataDevolucaoPrevistaISO,
+                dataEntregaISO,
+                emprestimo.diasAtraso || 0,
+                suspensaoAteISO,
+                emprestimo.id
+            ]);
+            if (resultado.affectedRows > 0) {
+                return this.buscarEmprestimoPorId(emprestimo.id);
+            }
+            return undefined;
+        }
+        catch (err) {
+            console.error("Erro ao atualizar empréstimo:", err);
+            throw err;
+        }
+    }
+    async emprestimosAbertos(cpfUsuario) {
+        try {
+            const resultado = await (0, mysql_1.executarComandoSQL)("SELECT * FROM biblioteca.Emprestimo WHERE cpfUsuario = ? AND dataEntrega IS NULL", [cpfUsuario]);
+            return resultado.map((row) => new Emprestimo_1.Emprestimo(row.cpfUsuario, row.usuarioId, row.codigoExemplar, new Date(row.dataEmprestimo), new Date(row.dataDevolucaoPrevista), row.dataEntrega ? new Date(row.dataEntrega) : undefined, row.diasAtraso, row.suspensaoAte ? new Date(row.suspensaoAte) : undefined, row.id));
+        }
+        catch (err) {
+            console.error("Erro ao listar empréstimos abertos por usuário:", err);
+            throw err;
+        }
     }
 }
 exports.EmprestimoRepository = EmprestimoRepository;
