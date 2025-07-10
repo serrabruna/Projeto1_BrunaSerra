@@ -1,19 +1,33 @@
-export class Emprestimo{
-    static proximoId: number = 1;
+export class Emprestimo {
+    id?: number; 
+    cpfUsuario: string; 
+    usuarioId: number; 
+    codigoExemplar: number; 
+    dataEmprestimo: Date; 
+    dataDevolucaoPrevista: Date; 
+    dataEntrega?: Date;   
+    diasAtraso?: number; 
+    suspensaoAte?: Date; 
 
-    id: number;
-    cpfUsuario: string;
-    codigoExemplar: number;
-    dataEmprestimo: Date;
-    dataDevolucao?:Date;
-    dataEntrega?: Date;
-    diasAtraso?: number;
-    suspencaoAte?: Date;
-
-    constructor(cpfUsuario: string, codigoExemplar: number){
-        this.id = Emprestimo.proximoId++;
+    constructor(
+        cpfUsuario: string,
+        usuarioId: number, 
+        codigoExemplar: number,
+        dataEmprestimo: Date,
+        dataDevolucaoPrevista: Date,
+        dataEntrega?: Date,
+        diasAtraso?: number,
+        suspensaoAte?: Date,
+        id?: number
+    ) {
         this.cpfUsuario = cpfUsuario;
+        this.usuarioId = usuarioId;
         this.codigoExemplar = codigoExemplar;
-        this.dataEmprestimo = new Date();
+        this.dataEmprestimo = dataEmprestimo; 
+        this.dataDevolucaoPrevista = dataDevolucaoPrevista;
+        this.dataEntrega = dataEntrega;
+        this.diasAtraso = diasAtraso;
+        this.suspensaoAte = suspensaoAte;
+        this.id = id;
     }
 }
