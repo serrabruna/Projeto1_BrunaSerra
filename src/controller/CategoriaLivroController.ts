@@ -4,9 +4,9 @@ import { Request, Response } from "express";
 export class CategoriaLivroController{
     private categoriaLivroService = new CategoriaLivroService();
 
-    listarCategorias(req: Request, res: Response){
+    async listarCategorias(req: Request, res: Response): Promise<void>{
         try{
-            const categoria = this.categoriaLivroService.listarCategorias();
+            const categoria = await this.categoriaLivroService.listarCategorias();
             res.status(201).json(categoria);
         }
         catch(error: unknown){

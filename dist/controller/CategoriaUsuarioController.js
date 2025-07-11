@@ -4,9 +4,9 @@ exports.CategoriaUsuarioController = void 0;
 const CategoriaUsuarioService_1 = require("../service/CategoriaUsuarioService");
 class CategoriaUsuarioController {
     catUsuService = new CategoriaUsuarioService_1.CategoriaUsuarioService();
-    listarCategorias(req, res) {
+    async listarCategorias(req, res) {
         try {
-            const categoria = this.catUsuService.listarCategorias();
+            const categoria = await this.catUsuService.listarCategorias();
             res.status(201).json(categoria);
         }
         catch (error) {

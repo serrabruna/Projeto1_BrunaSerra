@@ -4,14 +4,14 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
-const routes_1 = require("./route/routes");
-const swagger_1 = require("./config/swagger");
+const UsuarioController_1 = require("./controller/UsuarioController");
 const CategoriaUsuarioController_1 = require("./controller/CategoriaUsuarioController");
 const CursoController_1 = require("./controller/CursoController");
 const LivroController_1 = require("./controller/LivroController");
 const CategoriaLivroController_1 = require("./controller/CategoriaLivroController");
 const EstoqueController_1 = require("./controller/EstoqueController");
 const EmprestimoController_1 = require("./controller/EmprestimoController");
+const usuarioController = new UsuarioController_1.UsuarioController();
 const catUsuController = new CategoriaUsuarioController_1.CategoriaUsuarioController();
 const cursoController = new CursoController_1.CursoController();
 const livroController = new LivroController_1.LivroController();
@@ -19,14 +19,14 @@ const categoriaLivroController = new CategoriaLivroController_1.CategoriaLivroCo
 const estoqueController = new EstoqueController_1.EstoqueController();
 const emprestimoController = new EmprestimoController_1.EmprestimoController();
 const app = (0, express_1.default)();
-const PORT = 3090;
+const PORT = process.env.PORT ?? 3090;
 app.use(express_1.default.json());
-const apiRouter = express_1.default.Router();
-(0, routes_1.RegisterRoutes)(apiRouter);
-app.use('/library', apiRouter);
-(0, routes_1.RegisterRoutes)(app);
-(0, swagger_1.setupSwagger)(app);
-app.listen(PORT, () => console.log("API online na porta: " + PORT));
+//Usuário
+app.post("/library/usuarios", usuarioController.criarUsuario.bind(usuarioController));
+app.get("/library/usuarios", usuarioController.listarUsuarios.bind(usuarioController));
+app.get("/library/usuarios/:cpf", usuarioController.buscarUsuario.bind(usuarioController));
+app.put("/library/usuarios/:cpf", usuarioController.atualizarUsuario.bind(usuarioController));
+app.delete("/library/usuarios/:cpf", usuarioController.removerUsuario.bind(usuarioController));
 //Livro
 app.post("/library/livros", livroController.criarLivro.bind(livroController));
 app.get("/library/livros", livroController.listarLivro.bind(livroController));

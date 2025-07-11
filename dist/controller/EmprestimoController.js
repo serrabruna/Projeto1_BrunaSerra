@@ -4,10 +4,10 @@ exports.EmprestimoController = void 0;
 const EmprestimoService_1 = require("../service/EmprestimoService");
 class EmprestimoController {
     emprestimoService = new EmprestimoService_1.EmprestimoService;
-    criarEmprestimo(req, res) {
+    async criarEmprestimo(req, res) {
         try {
             const { cpfUsuario, codigoExemplar } = req.body;
-            const emprestimo = this.emprestimoService.registrarEmprestimo(cpfUsuario, codigoExemplar);
+            const emprestimo = await this.emprestimoService.registrarEmprestimo(cpfUsuario, codigoExemplar);
             res.status(201).json(emprestimo);
         }
         catch (error) {
@@ -20,9 +20,9 @@ class EmprestimoController {
             });
         }
     }
-    listarEmprestimos(req, res) {
+    async listarEmprestimos(req, res) {
         try {
-            const emprestimo = this.emprestimoService.listarEmprestimos();
+            const emprestimo = await this.emprestimoService.listarEmprestimos();
             res.status(201).json(emprestimo);
         }
         catch (error) {
@@ -35,10 +35,10 @@ class EmprestimoController {
             });
         }
     }
-    registrarDevolucao(req, res) {
+    async registrarDevolucao(req, res) {
         const id = parseInt(req.params.id);
         try {
-            const emprestimo = this.emprestimoService.registrarDevolucao(id);
+            const emprestimo = await this.emprestimoService.registrarDevolucao(id);
             res.status(201).json(emprestimo);
         }
         catch (error) {

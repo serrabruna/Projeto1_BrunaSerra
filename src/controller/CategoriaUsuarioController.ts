@@ -4,9 +4,9 @@ import { Request, Response } from "express";
 export class CategoriaUsuarioController{
     private catUsuService = new CategoriaUsuarioService();
 
-    listarCategorias(req: Request, res: Response){
+    async listarCategorias(req: Request, res: Response): Promise<void>{
         try{
-            const categoria = this.catUsuService.listarCategorias();
+            const categoria = await this.catUsuService.listarCategorias();
             res.status(201).json(categoria);
         }
         catch(error: unknown){

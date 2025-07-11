@@ -14,13 +14,13 @@ class EstoqueRepository {
     }
     async createTable() {
         const query = `CREATE TABLE IF NOT EXISTS biblioteca.Estoque (
-          codigo INT PRIMARY KEY,
-          livro_isbn VARCHAR(13) NOT NULL,
-          quantidade INT NOT NULL,
-          quantidade_emprestada INT DEFAULT 0,
-          status ENUM('disponivel', 'emprestado') DEFAULT 'disponivel',
-          FOREIGN KEY (livro_isbn) REFERENCES biblioteca.Livro(isbn)
-      )`;
+            codigo INT PRIMARY KEY,
+            livro_isbn VARCHAR(13) NOT NULL,
+            quantidade INT NOT NULL,
+            quantidade_emprestada INT DEFAULT 0,
+            status ENUM('disponivel', 'emprestado') DEFAULT 'disponivel',
+            FOREIGN KEY (livro_isbn) REFERENCES biblioteca.Livro(isbn)
+        )`;
         try {
             await (0, mysql_1.executarComandoSQL)(query, []);
             console.log("Tabela Estoque criada com sucesso.");

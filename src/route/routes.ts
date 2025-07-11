@@ -88,7 +88,7 @@ export function RegisterRoutes(app: Router) {
         };
         app.get('/usuario/all',
             ...(fetchMiddlewares<RequestHandler>(UsuarioController)),
-            ...(fetchMiddlewares<RequestHandler>(UsuarioController.prototype.listarUsuario)),
+            ...(fetchMiddlewares<RequestHandler>(UsuarioController.prototype.listarUsuarios)),
 
             async function UsuarioController_listarUsuario(request: ExRequest, response: ExResponse, next: any) {
 

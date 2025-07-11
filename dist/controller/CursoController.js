@@ -4,9 +4,9 @@ exports.CursoController = void 0;
 const CursoService_1 = require("../service/CursoService");
 class CursoController {
     cursoService = new CursoService_1.CursoService();
-    listarCursos(req, res) {
+    async listarCursos(req, res) {
         try {
-            const curso = this.cursoService.listarCursos();
+            const curso = await this.cursoService.listarCursos();
             res.status(201).json(curso);
         }
         catch (error) {

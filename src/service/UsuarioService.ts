@@ -68,31 +68,32 @@ export class UsuarioService {
         
     }
 
-    async listarUsuarios(): Promise<Usuario[]> {
+    async listarUsuarios(): Promise<Usuario[]>{
         try{
-            const resultado = await executarComandoSQL(
-                "SELECT * FROM biblioteca.Usuario", []
-            );
-
-            return resultado.map((row: any) => {
-                const usuario = new Usuario(
-                    row.cpf,
-                    row.nome,
-                    row.email,
-                    row.categoriaId,
-                    row.cursoId
-                );
-                usuario.id = row.id;
-                usuario.status = row.status;
-                usuario.diaSuspensao = row.diaSuspensao;
-                usuario.suspensaoAte = row.suspensaoAte;
-                return usuario;
-            });
+            const usuarios = await this.usuarioRepository.listarUsuarios();
+            return usuarios;
         }catch(error){
             console.error("Erro ao listar usuários");
             throw error;
         }
-        
+    }
+
+    async listarUsuarioComFiltro(filtros: any): Promise<Usuario[]> {
+        try {
+            const { nome, status, categoriaId, cursoId } = filtros;
+            const usuarios = await this.usuarioRepository.listarUsuarios();
+
+            return usuarios.filter(usuario => {
+                const combinaNomes = nome ? usuario.nome.toLowerCase().includes(nome.toLowerCase()) : true; 
+                const combinaStatus = status ? usuario.status === status : true; 
+                const combinaCatId = categoriaId ? usuario.categoriaId === categoriaId : true; 
+                const combinaCurId = cursoId ? usuario.cursoId === cursoId : true; 
+                return combinaNomes && combinaStatus && combinaCatId && combinaCurId; 
+            });
+        } catch (error) {
+            console.error("Erro ao listar usuários com filtro:", error);
+            throw error;
+        }
     }
 
     async buscarUsuario(cpf: string): Promise<Usuario> {

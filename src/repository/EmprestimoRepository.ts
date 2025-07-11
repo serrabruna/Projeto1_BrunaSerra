@@ -4,7 +4,7 @@ import { executarComandoSQL } from "../database/mysql";
 export class EmprestimoRepository {
   private static instance: EmprestimoRepository;
 
-  private constructor() {}
+  constructor() {}
 
   public static getInstance(): EmprestimoRepository {
     if (!this.instance) {

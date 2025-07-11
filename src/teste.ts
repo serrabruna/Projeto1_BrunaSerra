@@ -1,14 +1,16 @@
+import { EmprestimoRepository } from "./repository/EmprestimoRepository";
+import { LivroRepository } from "./repository/LivroRepository";
 import { EstoqueRepository } from "./repository/EstoqueRepository";
 
 async function main() {
-    const exemplar = new EstoqueRepository();
+    const emprestimo = new EmprestimoRepository();
+    const livro = new LivroRepository();
+    const estoque = new EstoqueRepository();
 
-    await exemplar.createTable();
-    await exemplar.insertExemplar(
-        "123456789023",
-        1,
-        0
-    )
+    await livro.createTable();
+    await estoque.createTable();
+    await emprestimo.createTable();
+
 }
 
 main();

@@ -4,10 +4,10 @@ import { Request, Response } from "express";
 export class EmprestimoController{
     private emprestimoService = new EmprestimoService;
 
-    criarEmprestimo(req: Request, res: Response): void{
+    async criarEmprestimo(req: Request, res: Response): Promise<void>{
         try{
             const { cpfUsuario, codigoExemplar } = req.body;
-            const emprestimo = this.emprestimoService.registrarEmprestimo(cpfUsuario, codigoExemplar);
+            const emprestimo = await this.emprestimoService.registrarEmprestimo(cpfUsuario, codigoExemplar);
             res.status(201).json(emprestimo);
         }catch(error: unknown){
             let message: string = "Não foi possível criar o registro";
@@ -20,9 +20,9 @@ export class EmprestimoController{
         }
     }
 
-    listarEmprestimos(req: Request, res: Response): void{
+    async listarEmprestimos(req: Request, res: Response): Promise<void>{
         try{
-            const emprestimo = this.emprestimoService.listarEmprestimos();
+            const emprestimo = await this.emprestimoService.listarEmprestimos();
             res.status(201).json(emprestimo);
         }
         catch(error: unknown){
@@ -36,10 +36,10 @@ export class EmprestimoController{
         }
     }
 
-    registrarDevolucao(req: Request, res: Response): void{
+    async registrarDevolucao(req: Request, res: Response): Promise<void>{
         const id = parseInt(req.params.id);
         try{
-            const emprestimo = this.emprestimoService.registrarDevolucao(id);
+            const emprestimo = await this.emprestimoService.registrarDevolucao(id);
             res.status(201).json(emprestimo);
         }
         catch(error: unknown){

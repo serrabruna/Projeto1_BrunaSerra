@@ -4,9 +4,9 @@ exports.LivroController = void 0;
 const LivroService_1 = require("../service/LivroService");
 class LivroController {
     livroService = new LivroService_1.LivroService();
-    criarLivro(req, res) {
+    async criarLivro(req, res) {
         try {
-            const livro = this.livroService.AdicionarLivro(req.body);
+            const livro = await this.livroService.AdicionarLivro(req.body);
             res.status(201).json(livro);
         }
         catch (error) {
@@ -19,10 +19,10 @@ class LivroController {
             });
         }
     }
-    listarLivro(req, res) {
+    async listarLivro(req, res) {
         try {
             const filtros = req.query;
-            const livro = this.livroService.listarLivroComFiltro(filtros);
+            const livro = await this.livroService.listarLivroComFiltro(filtros);
             res.status(201).json(livro);
         }
         catch (error) {
@@ -35,10 +35,10 @@ class LivroController {
             });
         }
     }
-    buscarLivro(req, res) {
+    async buscarLivro(req, res) {
         const isbn = req.params.isbn;
         try {
-            const livro = this.livroService.buscarLivroPorISBN(isbn);
+            const livro = await this.livroService.buscarLivroPorISBN(isbn);
             res.status(201).json(livro);
         }
         catch (error) {
@@ -51,10 +51,10 @@ class LivroController {
             });
         }
     }
-    atualizarLivro(req, res) {
+    async atualizarLivro(req, res) {
         const isbn = req.params.isbn;
         try {
-            const livro = this.livroService.atualizarLivro(isbn, req.body);
+            const livro = await this.livroService.atualizarLivro(isbn, req.body);
             res.status(201).json(livro);
         }
         catch (error) {
@@ -67,10 +67,10 @@ class LivroController {
             });
         }
     }
-    removerLivro(req, res) {
+    async removerLivro(req, res) {
         const isbn = req.params.isbn;
         try {
-            const livro = this.livroService.removerLivro(isbn);
+            const livro = await this.livroService.removerLivro(isbn);
             res.status(204).send();
         }
         catch (error) {

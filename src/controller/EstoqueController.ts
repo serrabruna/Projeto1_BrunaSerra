@@ -4,10 +4,10 @@ import { Request, Response } from "express";
 export class EstoqueController{
     private estoqueService = new EstoqueService;
 
-    criarExemplar(req: Request, res: Response): void{
+    async criarExemplar(req: Request, res: Response): Promise<void>{
         try{
             const { codigo, livro_isbn } = req.body;
-            const estoque = this.estoqueService.cadastrarExemplar(codigo, livro_isbn);
+            const estoque = await this.estoqueService.cadastrarExemplar(codigo, livro_isbn);
             res.status(201).json(estoque);
         }catch(error: unknown){
             let message: string = "Não foi possível criar o registro";
@@ -20,9 +20,9 @@ export class EstoqueController{
         }
     }
 
-    listarDisponivel(req: Request, res: Response): void{
+    async listarDisponivel(req: Request, res: Response): Promise<void>{
         try{
-            const estoque = this.estoqueService.listarDisponiveis();
+            const estoque = await this.estoqueService.listarDisponiveis();
             res.status(201).json(estoque);
         }
         catch(error: unknown){
@@ -36,10 +36,10 @@ export class EstoqueController{
         }
     }
 
-    buscarExemplar(req: Request, res: Response): void{
+    async buscarExemplar(req: Request, res: Response): Promise<void>{
         const codigo = parseInt(req.params.codigo);
         try{
-            const estoque = this.estoqueService.buscarExemplar(codigo);
+            const estoque = await this.estoqueService.buscarExemplar(codigo);
             res.status(201).json(estoque);
         }
         catch(error: unknown){
@@ -53,10 +53,10 @@ export class EstoqueController{
         }
     }
 
-    atualizarStatus(req: Request, res: Response): void{
+    async atualizarStatus(req: Request, res: Response): Promise<void>{
         const codigo = parseInt(req.params.codigo);
         try{
-            const estoque = this.estoqueService.atualizarStatus(codigo, req.body);
+            const estoque = await this.estoqueService.atualizarStatus(codigo, req.body);
             res.status(201).json(estoque);
         }
         catch(error: unknown){
@@ -70,10 +70,10 @@ export class EstoqueController{
         }
     }
 
-    resumoPorISBN(req: Request, res: Response): void {
+    async resumoPorISBN(req: Request, res: Response): Promise<void> {
         try {
             const { isbn } = req.params;
-            const resumo = this.estoqueService.getResumoEstoque(isbn);
+            const resumo = await this.estoqueService.getResumoEstoque(isbn);
             res.status(200).json(resumo);
         } 
         catch (error: any){
@@ -81,10 +81,10 @@ export class EstoqueController{
         }
     }
 
-    RemoverEstoque(req: Request, res: Response): void{
+    async RemoverEstoque(req: Request, res: Response): Promise<void>{
         const codigo = parseInt(req.params.codigo);
         try{
-            const estoque = this.estoqueService.removerExemplar(codigo);
+            const estoque = await this.estoqueService.removerExemplar(codigo);
             res.status(204).send();
         }
         catch(error: unknown){

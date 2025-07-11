@@ -4,9 +4,9 @@ import { Request, Response } from "express";
 export class LivroController{
     private livroService = new LivroService();
 
-    criarLivro(req: Request, res: Response): void{
+    async criarLivro(req: Request, res: Response): Promise<void>{
         try{
-            const livro = this.livroService.AdicionarLivro(req.body);
+            const livro = await this.livroService.AdicionarLivro(req.body);
             res.status(201).json(livro);
         }catch(error: unknown){
             let message: string = "Não foi possível criar o registro";
@@ -19,10 +19,10 @@ export class LivroController{
         }
     }
 
-    listarLivro(req: Request, res: Response): void{
+    async listarLivro(req: Request, res: Response): Promise<void>{
         try{
             const filtros = req.query;
-            const livro = this.livroService.listarLivroComFiltro(filtros);
+            const livro = await this.livroService.listarLivroComFiltro(filtros);
             res.status(201).json(livro);
         }
         catch(error: unknown){
@@ -36,10 +36,10 @@ export class LivroController{
         }
     }
 
-    buscarLivro(req: Request, res: Response): void{
+    async buscarLivro(req: Request, res: Response): Promise<void>{
         const isbn = req.params.isbn;
         try{
-            const livro = this.livroService.buscarLivroPorISBN(isbn);
+            const livro = await this.livroService.buscarLivroPorISBN(isbn);
             res.status(201).json(livro);
         }
         catch(error: unknown){
@@ -53,10 +53,10 @@ export class LivroController{
         }
     }
 
-    atualizarLivro(req: Request, res: Response): void{
+    async atualizarLivro(req: Request, res: Response): Promise<void>{
         const isbn = req.params.isbn;
         try{
-            const livro = this.livroService.atualizarLivro(isbn, req.body);
+            const livro = await this.livroService.atualizarLivro(isbn, req.body);
             res.status(201).json(livro);
         }
         catch(error: unknown){
@@ -70,10 +70,10 @@ export class LivroController{
         }
     }
 
-    removerLivro(req: Request, res: Response): void{
+    async removerLivro(req: Request, res: Response): Promise<void>{
         const isbn = req.params.isbn;
         try{
-            const livro = this.livroService.removerLivro(isbn);
+            const livro = await this.livroService.removerLivro(isbn);
             res.status(204).send();
         }
         catch(error: unknown){

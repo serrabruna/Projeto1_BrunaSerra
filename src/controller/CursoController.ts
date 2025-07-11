@@ -4,9 +4,9 @@ import { Request, Response } from "express";
 export class CursoController{
     private cursoService = new CursoService();
 
-    listarCursos(req: Request, res: Response){
+    async listarCursos(req: Request, res: Response): Promise<void>{
         try{
-            const curso = this.cursoService.listarCursos();
+            const curso = await this.cursoService.listarCursos();
             res.status(201).json(curso);
         }
         catch(error: unknown){

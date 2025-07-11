@@ -4,10 +4,10 @@ exports.EstoqueController = void 0;
 const EstoqueService_1 = require("../service/EstoqueService");
 class EstoqueController {
     estoqueService = new EstoqueService_1.EstoqueService;
-    criarExemplar(req, res) {
+    async criarExemplar(req, res) {
         try {
             const { codigo, livro_isbn } = req.body;
-            const estoque = this.estoqueService.cadastrarExemplar(codigo, livro_isbn);
+            const estoque = await this.estoqueService.cadastrarExemplar(codigo, livro_isbn);
             res.status(201).json(estoque);
         }
         catch (error) {
@@ -20,9 +20,9 @@ class EstoqueController {
             });
         }
     }
-    listarDisponivel(req, res) {
+    async listarDisponivel(req, res) {
         try {
-            const estoque = this.estoqueService.listarDisponiveis();
+            const estoque = await this.estoqueService.listarDisponiveis();
             res.status(201).json(estoque);
         }
         catch (error) {
@@ -35,10 +35,10 @@ class EstoqueController {
             });
         }
     }
-    buscarExemplar(req, res) {
+    async buscarExemplar(req, res) {
         const codigo = parseInt(req.params.codigo);
         try {
-            const estoque = this.estoqueService.buscarExemplar(codigo);
+            const estoque = await this.estoqueService.buscarExemplar(codigo);
             res.status(201).json(estoque);
         }
         catch (error) {
@@ -51,10 +51,10 @@ class EstoqueController {
             });
         }
     }
-    atualizarStatus(req, res) {
+    async atualizarStatus(req, res) {
         const codigo = parseInt(req.params.codigo);
         try {
-            const estoque = this.estoqueService.atualizarStatus(codigo, req.body);
+            const estoque = await this.estoqueService.atualizarStatus(codigo, req.body);
             res.status(201).json(estoque);
         }
         catch (error) {
@@ -67,20 +67,20 @@ class EstoqueController {
             });
         }
     }
-    resumoPorISBN(req, res) {
+    async resumoPorISBN(req, res) {
         try {
             const { isbn } = req.params;
-            const resumo = this.estoqueService.getResumoEstoque(isbn);
+            const resumo = await this.estoqueService.getResumoEstoque(isbn);
             res.status(200).json(resumo);
         }
         catch (error) {
             res.status(404).json({ message: error.message });
         }
     }
-    RemoverEstoque(req, res) {
+    async RemoverEstoque(req, res) {
         const codigo = parseInt(req.params.codigo);
         try {
-            const estoque = this.estoqueService.removerExemplar(codigo);
+            const estoque = await this.estoqueService.removerExemplar(codigo);
             res.status(204).send();
         }
         catch (error) {

@@ -2,51 +2,51 @@ import { Estoque } from "../model/entity/Estoque";
 import { executarComandoSQL } from "../database/mysql";
 
 export class EstoqueRepository {
-  private static instance: EstoqueRepository;
+    private static instance: EstoqueRepository;
 
-  constructor() {}
+    constructor() {}
 
-  public static getInstance(): EstoqueRepository {
+    public static getInstance(): EstoqueRepository {
     if (!this.instance) {
-      this.instance = new EstoqueRepository();
+        this.instance = new EstoqueRepository();
     }
     return this.instance;
-  }
+    }
 
-  async createTable(){
-      const query = `CREATE TABLE IF NOT EXISTS biblioteca.Estoque (
-          codigo INT PRIMARY KEY,
-          livro_isbn VARCHAR(13) NOT NULL,
-          quantidade INT NOT NULL,
-          quantidade_emprestada INT DEFAULT 0,
-          status ENUM('disponivel', 'emprestado') DEFAULT 'disponivel',
-          FOREIGN KEY (livro_isbn) REFERENCES biblioteca.Livro(isbn)
-      )`
-      try {
-          await executarComandoSQL(query, []);
-          console.log("Tabela Estoque criada com sucesso.");
-      }catch (err) {
-        console.error("Erro ao criar a tabela Estoque:", err);
-      }   
-  }
+    async createTable(){
+        const query = `CREATE TABLE IF NOT EXISTS biblioteca.Estoque (
+            codigo INT PRIMARY KEY,
+            livro_isbn VARCHAR(13) NOT NULL,
+            quantidade INT NOT NULL,
+            quantidade_emprestada INT DEFAULT 0,
+            status ENUM('disponivel', 'emprestado') DEFAULT 'disponivel',
+            FOREIGN KEY (livro_isbn) REFERENCES biblioteca.Livro(isbn)
+        )`
+        try {
+            await executarComandoSQL(query, []);
+            console.log("Tabela Estoque criada com sucesso.");
+        }catch (err) {
+            console.error("Erro ao criar a tabela Estoque:", err);
+        }   
+    }
 
-  async insertExemplar(codigo: number, livro_isbn: string, quantidade: number, quantidade_emprestada: number): Promise<Estoque>{
-      try {
-          const resultado: any = await executarComandoSQL(
-              "INSERT INTO biblioteca.Estoque (codigo, livro_isbn, quantidade, quantidade_emprestada, status) VALUES (?, ?, ?, ?, 'disponivel')",
-              [codigo, livro_isbn, quantidade, quantidade_emprestada]
-          );
-          const newExemplar = new Estoque(codigo, livro_isbn, quantidade, quantidade_emprestada);
-          console.log("Exemplar inserido com sucesso:", newExemplar);
-          return newExemplar;
-      }catch (err) {
-          console.error("Erro ao inserir exemplar:", err);
-          throw err;
-      }
-  }
+    async insertExemplar(codigo: number, livro_isbn: string, quantidade: number, quantidade_emprestada: number): Promise<Estoque>{
+        try {
+            const resultado: any = await executarComandoSQL(
+                "INSERT INTO biblioteca.Estoque (codigo, livro_isbn, quantidade, quantidade_emprestada, status) VALUES (?, ?, ?, ?, 'disponivel')",
+                [codigo, livro_isbn, quantidade, quantidade_emprestada]
+            );
+            const newExemplar = new Estoque(codigo, livro_isbn, quantidade, quantidade_emprestada);
+            console.log("Exemplar inserido com sucesso:", newExemplar);
+            return newExemplar;
+        }catch (err) {
+            console.error("Erro ao inserir exemplar:", err);
+            throw err;
+        }
+    }
 
 
-  async buscarPorISBN(isbn: string): Promise<Estoque | undefined> {
+    async buscarPorISBN(isbn: string): Promise<Estoque | undefined> {
         try {
             const resultado: any[] = await executarComandoSQL(
                 "SELECT * FROM biblioteca.Estoque WHERE livro_isbn = ?",
@@ -66,9 +66,9 @@ export class EstoqueRepository {
             console.error("Erro ao buscar estoque por ISBN:", err);
             throw err;
         }
-  }
+    }
 
-  async buscarPorCodigo(codigo: number): Promise<Estoque | undefined> {
+    async buscarPorCodigo(codigo: number): Promise<Estoque | undefined> {
         try {
             const resultado: any[] = await executarComandoSQL(
                 "SELECT * FROM biblioteca.Estoque WHERE codigo = ?",
@@ -89,7 +89,8 @@ export class EstoqueRepository {
             throw err;
         }
     }
-  async listarEstoque(): Promise<Estoque[]> {
+    
+    async listarEstoque(): Promise<Estoque[]> {
         try {
             const resultado: any[] = await executarComandoSQL("SELECT * FROM biblioteca.Estoque", []);
             return resultado.map((row: any) => new Estoque(

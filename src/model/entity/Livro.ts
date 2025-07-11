@@ -14,5 +14,6 @@ export class Livro{
         this.editora = editora;
         this.edicao = edicao;
         this.categoriaId = categoriaId;
+        this.id = id;
     }
 }
