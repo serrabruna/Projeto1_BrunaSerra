@@ -86,6 +86,14 @@ class EstoqueRepository {
     async atualizarDadosEstoque(estoque) {
         const query = `UPDATE biblioteca.Estoque SET quantidade = ?, quantidade_emprestada = ?, status = ?
             WHERE codigo = ?`;
+        const params = [
+            estoque.quantidade,
+            estoque.quantidade_emprestada,
+            estoque.status,
+            estoque.codigo
+        ];
+        console.log("DEBUG REPO: Query de atualização de Estoque:", query); // <-- QUERO VER ESTE OUTPUT
+        console.log("DEBUG REPO: Parâmetros de atualização de Estoque:", params); // <-- E ESTE
         try {
             const resultado = await (0, mysql_1.executarComandoSQL)(query, [
                 estoque.quantidade,

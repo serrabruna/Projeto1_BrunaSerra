@@ -5,7 +5,9 @@ const Emprestimo_1 = require("../model/entity/Emprestimo");
 const mysql_1 = require("../database/mysql");
 class EmprestimoRepository {
     static instance;
-    constructor() { }
+    constructor() {
+        this.createTable();
+    }
     static getInstance() {
         if (!this.instance) {
             this.instance = new EmprestimoRepository();
