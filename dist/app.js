@@ -34,7 +34,7 @@ app.get("/library/livros/:isbn", livroController.buscarLivro.bind(livroControlle
 app.put("/library/livros/:isbn", livroController.atualizarLivro.bind(livroController));
 app.delete("/library/livros/:isbn", livroController.removerLivro.bind(livroController));
 //Estoque
-app.post("/library/estoque", estoqueController.criarExemplar.bind(estoqueController));
+app.post("/library/estoque", estoqueController.adicionarAoEstoque.bind(estoqueController));
 app.get("/library/estoque", estoqueController.listarDisponivel.bind(estoqueController));
 app.get("/library/estoque/:codigo", estoqueController.buscarExemplar.bind(estoqueController));
 app.put("/library/estoque/:codigo", estoqueController.atualizarStatus.bind(estoqueController));

@@ -4,7 +4,9 @@ import { executarComandoSQL } from "../database/mysql";
 export class EstoqueRepository {
     private static instance: EstoqueRepository;
 
-    constructor() {}
+    private constructor() {
+        this.createTable();
+    }
 
     public static getInstance(): EstoqueRepository {
     if (!this.instance) {
@@ -13,34 +15,36 @@ export class EstoqueRepository {
     return this.instance;
     }
 
-    async createTable(){
-        const query = `CREATE TABLE IF NOT EXISTS biblioteca.Estoque (
-            codigo INT PRIMARY KEY,
-            livro_isbn VARCHAR(13) NOT NULL,
-            quantidade INT NOT NULL,
-            quantidade_emprestada INT DEFAULT 0,
-            status ENUM('disponivel', 'emprestado') DEFAULT 'disponivel',
-            FOREIGN KEY (livro_isbn) REFERENCES biblioteca.Livro(isbn)
-        )`
+    async createTable(): Promise<void> {
+        const query = `
+            CREATE TABLE IF NOT EXISTS biblioteca.Estoque (
+                codigo INT AUTO_INCREMENT PRIMARY KEY,
+                livro_isbn VARCHAR(13) NOT NULL UNIQUE,
+                quantidade INT NOT NULL,
+                quantidade_emprestada INT DEFAULT 0,
+                status ENUM('disponivel', 'emprestado') DEFAULT 'disponivel',
+                FOREIGN KEY (livro_isbn) REFERENCES biblioteca.Livro(isbn)
+            )`;
         try {
             await executarComandoSQL(query, []);
-            console.log("Tabela Estoque criada com sucesso.");
-        }catch (err) {
+            console.log("Tabela Estoque criada com sucesso (modelo de resumo por ISBN).");
+        } catch (err) {
             console.error("Erro ao criar a tabela Estoque:", err);
-        }   
+            throw err;
+        }
     }
 
-    async insertExemplar(codigo: number, livro_isbn: string, quantidade: number, quantidade_emprestada: number): Promise<Estoque>{
+    async insertExemplar(livro_isbn: string, quantidade: number, quantidade_emprestada: number = 0): Promise<Estoque> {
         try {
             const resultado: any = await executarComandoSQL(
-                "INSERT INTO biblioteca.Estoque (codigo, livro_isbn, quantidade, quantidade_emprestada, status) VALUES (?, ?, ?, ?, 'disponivel')",
-                [codigo, livro_isbn, quantidade, quantidade_emprestada]
+                "INSERT INTO biblioteca.Estoque (livro_isbn, quantidade, quantidade_emprestada, status) VALUES (?, ?, ?, ?)",
+                [livro_isbn, quantidade, quantidade_emprestada, (quantidade > quantidade_emprestada) ? 'disponivel' : (quantidade_emprestada > 0 ? 'emprestado' : 'disponivel')]
             );
-            const newExemplar = new Estoque(codigo, livro_isbn, quantidade, quantidade_emprestada);
-            console.log("Exemplar inserido com sucesso:", newExemplar);
+            const newExemplar = new Estoque(livro_isbn, quantidade, quantidade_emprestada, resultado.insertId);
+            console.log("Registro de Estoque inserido com sucesso:", newExemplar);
             return newExemplar;
-        }catch (err) {
-            console.error("Erro ao inserir exemplar:", err);
+        } catch (err) {
+            console.error("Erro ao inserir registro de estoque:", err);
             throw err;
         }
     }
@@ -117,10 +121,9 @@ export class EstoqueRepository {
                 estoque.codigo
             ]);
             if (resultado.affectedRows > 0) {
-                // Retorna o estado atualizado do estoque do BD
-                return this.buscarPorCodigo(estoque.codigo!); // 'codigo!' afirma que não será undefined
+                return this.buscarPorCodigo(estoque.codigo!);
             }
-            return undefined; // Retorna undefined se o registro não for encontrado/afetado
+            return undefined; 
         } catch (err) {
             console.error("Erro ao atualizar dados do estoque:", err);
             throw err;

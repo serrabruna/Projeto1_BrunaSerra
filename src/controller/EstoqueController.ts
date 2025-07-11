@@ -4,10 +4,10 @@ import { Request, Response } from "express";
 export class EstoqueController{
     private estoqueService = new EstoqueService;
 
-    async criarExemplar(req: Request, res: Response): Promise<void>{
+    async adicionarAoEstoque(req: Request, res: Response): Promise<void>{
         try{
-            const { codigo, livro_isbn } = req.body;
-            const estoque = await this.estoqueService.cadastrarExemplar(codigo, livro_isbn);
+            const { livro_isbn, quantidade } = req.body;
+            const estoque = await this.estoqueService.adicionarLivroAoEstoque(livro_isbn, quantidade);
             res.status(201).json(estoque);
         }catch(error: unknown){
             let message: string = "Não foi possível criar o registro";
@@ -39,7 +39,7 @@ export class EstoqueController{
     async buscarExemplar(req: Request, res: Response): Promise<void>{
         const codigo = parseInt(req.params.codigo);
         try{
-            const estoque = await this.estoqueService.buscarExemplar(codigo);
+            const estoque = await this.estoqueService.buscarEstoquePorCodigo(codigo);
             res.status(201).json(estoque);
         }
         catch(error: unknown){
@@ -55,8 +55,9 @@ export class EstoqueController{
 
     async atualizarStatus(req: Request, res: Response): Promise<void>{
         const codigo = parseInt(req.params.codigo);
+        const { status } = req.body;
         try{
-            const estoque = await this.estoqueService.atualizarStatus(codigo, req.body);
+            const estoque = await this.estoqueService.atualizarStatusEstoque(codigo, status);
             res.status(201).json(estoque);
         }
         catch(error: unknown){
@@ -84,7 +85,7 @@ export class EstoqueController{
     async RemoverEstoque(req: Request, res: Response): Promise<void>{
         const codigo = parseInt(req.params.codigo);
         try{
-            const estoque = await this.estoqueService.removerExemplar(codigo);
+            const estoque = await this.estoqueService.removerRegistroEstoque(codigo);
             res.status(204).send();
         }
         catch(error: unknown){

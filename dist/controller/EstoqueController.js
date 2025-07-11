@@ -4,10 +4,10 @@ exports.EstoqueController = void 0;
 const EstoqueService_1 = require("../service/EstoqueService");
 class EstoqueController {
     estoqueService = new EstoqueService_1.EstoqueService;
-    async criarExemplar(req, res) {
+    async adicionarAoEstoque(req, res) {
         try {
-            const { codigo, livro_isbn } = req.body;
-            const estoque = await this.estoqueService.cadastrarExemplar(codigo, livro_isbn);
+            const { livro_isbn, quantidade } = req.body;
+            const estoque = await this.estoqueService.adicionarLivroAoEstoque(livro_isbn, quantidade);
             res.status(201).json(estoque);
         }
         catch (error) {
@@ -38,7 +38,7 @@ class EstoqueController {
     async buscarExemplar(req, res) {
         const codigo = parseInt(req.params.codigo);
         try {
-            const estoque = await this.estoqueService.buscarExemplar(codigo);
+            const estoque = await this.estoqueService.buscarEstoquePorCodigo(codigo);
             res.status(201).json(estoque);
         }
         catch (error) {
@@ -53,8 +53,9 @@ class EstoqueController {
     }
     async atualizarStatus(req, res) {
         const codigo = parseInt(req.params.codigo);
+        const { status } = req.body;
         try {
-            const estoque = await this.estoqueService.atualizarStatus(codigo, req.body);
+            const estoque = await this.estoqueService.atualizarStatusEstoque(codigo, status);
             res.status(201).json(estoque);
         }
         catch (error) {
@@ -80,7 +81,7 @@ class EstoqueController {
     async RemoverEstoque(req, res) {
         const codigo = parseInt(req.params.codigo);
         try {
-            const estoque = await this.estoqueService.removerExemplar(codigo);
+            const estoque = await this.estoqueService.removerRegistroEstoque(codigo);
             res.status(204).send();
         }
         catch (error) {

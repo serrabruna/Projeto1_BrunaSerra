@@ -6,105 +6,168 @@ export class EstoqueService {
   estoqueRepository: EstoqueRepository = EstoqueRepository.getInstance();
   livroRepository: LivroRepository = LivroRepository.getInstance();
 
-  async cadastrarExemplar(codigo: number, livro_isbn: string): Promise<Estoque> {
-      if (!codigo || !livro_isbn) {
-          throw new Error("Código do exemplar e ISBN do livro são obrigatórios!");
-      }
-
-      const livro = await this.livroRepository.buscarLivroPorISBN(livro_isbn);
-      if (!livro) {
-          throw new Error("Livro não encontrado para associar ao exemplar.");
-      }
-
-      const existente = await this.estoqueRepository.buscarPorCodigo(codigo);
-      if (existente) {
-          throw new Error(`Código de exemplar '${codigo}' já utilizado. Tente novamente.`);
-      }
-
-        const novoRegistroExemplar = new Estoque(codigo, livro_isbn, 1, 0);
-        novoRegistroExemplar.status = 'disponivel';
-
-        const estoqueCriado = await this.estoqueRepository.insertExemplar(
-            novoRegistroExemplar.codigo!, 
-            novoRegistroExemplar.livro_isbn,
-            novoRegistroExemplar.quantidade,
-            novoRegistroExemplar.quantidade_emprestada
-        );
-
-        if (!estoqueCriado) {
-            throw new Error("Erro ao criar novo exemplar no estoque.");
+  async adicionarLivroAoEstoque(livro_isbn: string, quantidadeParaAdicionar: number = 1): Promise<Estoque> {
+        if (!livro_isbn || quantidadeParaAdicionar <= 0) {
+            throw new Error("ISBN do livro e quantidade para adicionar são obrigatórios e a quantidade deve ser maior que zero.");
         }
-        return estoqueCriado;
-    }
 
-  async listarDisponiveis(): Promise<Estoque[]> {
-    const todosEstoques = await this.estoqueRepository.listarEstoque();
-    return todosEstoques.filter((e) => e.status === "disponivel");
-  }
+        try {
+            const livro = await this.livroRepository.buscarLivroPorISBN(livro_isbn);
+            if (!livro) {
+                throw new Error("Livro não encontrado para associar ao estoque.");
+            }
 
-  async buscarExemplar(codigo: number): Promise<Estoque> {
-    const exemplar = await this.estoqueRepository.buscarPorCodigo(codigo);
-        if (!exemplar) {
-            throw new Error("Exemplar não encontrado."); 
+            const estoqueExistente = await this.estoqueRepository.buscarPorISBN(livro_isbn);
+
+            if (estoqueExistente) {
+                estoqueExistente.quantidade += quantidadeParaAdicionar;
+                const estoqueAtualizado = await this.estoqueRepository.atualizarDadosEstoque(estoqueExistente);
+                if (!estoqueAtualizado) {
+                    throw new Error("Erro ao atualizar a quantidade do estoque existente.");
+                }
+                return estoqueAtualizado;
+            } else {
+                const novoRegistroEstoque = new Estoque(livro_isbn, quantidadeParaAdicionar, 0); 
+                const estoqueCriado = await this.estoqueRepository.insertExemplar(
+                    novoRegistroEstoque.livro_isbn,
+                    novoRegistroEstoque.quantidade,
+                    novoRegistroEstoque.quantidade_emprestada
+                );
+                if (!estoqueCriado) {
+                    throw new Error("Erro ao criar novo registro de estoque para o livro.");
+                }
+                return estoqueCriado;
+            }
+        } catch (error) {
+            console.error("Erro ao adicionar livro ao estoque:", error);
+            throw error;
         }
-        return exemplar;
-  }
-
-  async atualizarStatus(
-    codigo: number,
-    status: "disponivel" | "emprestado"
-  ): Promise<Estoque> {
-      const exemplar = await this.buscarExemplar(codigo);
-      if (exemplar.status === status) {
-          return exemplar;
-      }
-      exemplar.status = status;  
-      exemplar.quantidade_emprestada = status === "emprestado" ? 1 : 0; 
-
-      const exemplarAtualizado = await this.estoqueRepository.atualizarDadosEstoque(exemplar);
-      if (!exemplarAtualizado) {
-          throw new Error("Erro inesperado ao atualizar status do exemplar no banco de dados.");
-      }
-      return exemplarAtualizado;
     }
 
-  async marcarComoEmprestado(codigo: number): Promise<void> {
-    const exemplar = await this.buscarExemplar(codigo); 
-    if (exemplar.status !== "disponivel") {
-          throw new Error("Exemplar não está disponível para empréstimo.");
-    }
-    await this.atualizarStatus(codigo, "emprestado");
-  }
-
-  async marcarComoDisponivel(codigo: number): Promise<void> {
-    const exemplar = await this.buscarExemplar(codigo);
-    await this.atualizarStatus(codigo, "disponivel");
-  }
-
-  async existeExemplarDoLivro(isbn: string): Promise<boolean> {
-    const todosEstoques = await this.estoqueRepository.listarEstoque();
-    return todosEstoques.some((e) => e.livro_isbn === isbn);
-  }
-
-  async getResumoEstoque(isbn: string): Promise<{ total: number; disponiveis: number }> {
-      const todosEstoques = await this.estoqueRepository.listarEstoque();
-      const exemplaresDoLivro = todosEstoques.filter((e) => e.livro_isbn === isbn);
-
-      return {
-          total: exemplaresDoLivro.length,
-          disponiveis: exemplaresDoLivro.filter((e) => e.status === "disponivel").length
-        };
+    async listarDisponiveis(): Promise<Estoque[]> {
+        try {
+            const todosEstoques = await this.estoqueRepository.listarEstoque();
+            return todosEstoques.filter((e) => e.quantidade > e.quantidade_emprestada);
+        } catch (error) {
+            console.error("Erro no serviço ao listar estoques disponíveis: ", error);
+            throw error;
+        }
     }
 
+    async buscarEstoquePorCodigo(codigo: number): Promise<Estoque> {
+        try {
+            const estoque = await this.estoqueRepository.buscarPorCodigo(codigo);
+            if (!estoque) {
+                throw new Error("Registro de estoque não encontrado.");
+            }
+            return estoque;
+        } catch (error) {
+            console.error("Erro ao buscar registro de estoque por código: ", error);
+            throw error;
+        }
+    }
 
-  async removerExemplar(codigo: number): Promise<void> {
-    const exemplar = await this.buscarExemplar(codigo);
-    if (exemplar.status === "emprestado") {
-        throw new Error("Não é possível remover um exemplar emprestado.");
+    async atualizarStatusEstoque(codigo: number, status: "disponivel" | "emprestado"): Promise<Estoque> { 
+        try {
+            const estoque = await this.buscarEstoquePorCodigo(codigo); 
+
+            if (estoque.status === status) {
+                return estoque; 
+            }
+
+            estoque.status = status; 
+
+            const estoqueAtualizado = await this.estoqueRepository.atualizarDadosEstoque(estoque);
+            if (!estoqueAtualizado) {
+                throw new Error("Erro inesperado ao atualizar status do registro de estoque no banco de dados.");
+            }
+            return estoqueAtualizado;
+        } catch (error) {
+            console.error("Erro no serviço ao atualizar status do estoque: ", error);
+            throw error;
+        }
     }
-    const sucesso = await this.estoqueRepository.remover(codigo);
-    if (!sucesso) {
-        throw new Error("Erro ao remover exemplar.");
+
+    async marcarComoEmprestado(codigo: number): Promise<void> {
+        try {
+            const estoque = await this.buscarEstoquePorCodigo(codigo);
+
+            if (estoque.quantidade_emprestada >= estoque.quantidade) {
+                throw new Error("Não há exemplares disponíveis para empréstimo deste livro (estoque esgotado).");
+            }
+
+            estoque.quantidade_emprestada += 1; 
+            estoque.status = (estoque.quantidade_emprestada === estoque.quantidade) ? 'emprestado' : 'disponivel';
+
+            const estoqueAtualizado = await this.estoqueRepository.atualizarDadosEstoque(estoque);
+            if (!estoqueAtualizado) {
+                throw new Error("Erro ao marcar unidade como emprestada.");
+            }
+        } catch (error) {
+            console.error("Erro no serviço ao marcar unidade como emprestada: ", error);
+            throw error;
+        }
     }
-  }
+
+    async marcarComoDisponivel(codigo: number): Promise<void> {
+        try {
+            const estoque = await this.buscarEstoquePorCodigo(codigo); 
+
+            if (estoque.quantidade_emprestada <= 0) {
+                throw new Error("Não há exemplares emprestados deste livro para serem devolvidos.");
+            }
+
+            estoque.quantidade_emprestada -= 1; 
+            estoque.status = 'disponivel'; 
+
+            const estoqueAtualizado = await this.estoqueRepository.atualizarDadosEstoque(estoque);
+            if (!estoqueAtualizado) {
+                throw new Error("Erro ao marcar unidade como disponível.");
+            }
+        } catch (error) {
+            console.error("Erro no serviço ao marcar unidade como disponível: ", error); 
+        }
+    }
+
+    async existeEstoqueParaLivro(isbn: string): Promise<boolean> { 
+        try {
+            const estoque = await this.estoqueRepository.buscarPorISBN(isbn);
+            return estoque !== undefined;
+        } catch (error) {
+            console.error("Erro no serviço ao verificar existência de estoque para livro: ", error); 
+            throw error;
+        }
+    }
+
+    async getResumoEstoque(isbn: string): Promise<{ total: number; disponiveis: number }> {
+        try {
+            const estoque = await this.estoqueRepository.buscarPorISBN(isbn);
+            if (!estoque) {
+                return { total: 0, disponiveis: 0 }; 
+            }
+            return {
+                total: estoque.quantidade,
+                disponiveis: estoque.quantidade - estoque.quantidade_emprestada,
+            };
+        } catch (error) {
+            console.error("Erro ao obter resumo do estoque no serviço: ", error); 
+            throw error;
+        }
+    }
+
+    async removerRegistroEstoque(codigo: number): Promise<void> { 
+        try {
+            const estoque = await this.buscarEstoquePorCodigo(codigo);
+            if (estoque.quantidade > 0) {
+                throw new Error("Não é possível remover o registro de estoque: existem unidades de livros vinculadas.");
+            }
+            const sucesso = await this.estoqueRepository.remover(estoque.codigo!); 
+            if (!sucesso) {
+                throw new Error("Erro inesperado ao remover registro de estoque.");
+            }
+        } catch (error) {
+            console.error("Erro no serviço ao remover registro de estoque: ", error); 
+            throw error;
+        }
+    }
 }

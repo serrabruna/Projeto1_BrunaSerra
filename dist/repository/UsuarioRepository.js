@@ -5,7 +5,6 @@ const Usuario_1 = require("../model/entity/Usuario");
 const mysql_1 = require("../database/mysql");
 class UsuarioRepository {
     static instance;
-    usuarios = [];
     constructor() {
         this.createTable();
     }
@@ -25,7 +24,9 @@ class UsuarioRepository {
                 cursoId INT NOT NULL,
                 status VARCHAR(10) DEFAULT 'ativo',
                 diaSuspensao INT DEFAULT 0,
-                suspensaoAte DATE
+                suspensaoAte DATE,
+                FOREIGN KEY (categoriaId) REFERENCES biblioteca.CategoriaUsuario(id),
+                FOREIGN KEY (cursoId) REFERENCES biblioteca.Curso(id)
                 )`;
         try {
             const resultado = await (0, mysql_1.executarComandoSQL)(query, []);
@@ -38,8 +39,7 @@ class UsuarioRepository {
     async insertUsuario(cpf, nome, email, categoriaId, cursoId) {
         try {
             const resultado = await (0, mysql_1.executarComandoSQL)("INSERT INTO biblioteca.Usuario (cpf, nome, email, categoriaId, cursoId, status, diaSuspensao) VALUES (?, ?, ?, ?, ?, 'ativo', 0)", [cpf, nome, email, categoriaId, cursoId]);
-            const newUsuario = new Usuario_1.Usuario(cpf, nome, email, categoriaId, cursoId);
-            newUsuario.id = resultado.insertId;
+            const newUsuario = new Usuario_1.Usuario(cpf, nome, email, categoriaId, cursoId, resultado.insertId);
             +console.log("Usuario inserido com sucesso:", newUsuario);
             return newUsuario;
         }
@@ -57,7 +57,7 @@ class UsuarioRepository {
                 usuario.id = row.id;
                 usuario.status = row.status;
                 usuario.diaSuspensao = row.diaSuspensao;
-                usuario.suspensaoAte = row.suspensaoAte;
+                usuario.suspensaoAte = row.suspensaoAte ? new Date(row.suspensaoAte) : undefined;
                 return usuario;
             }
             return undefined;
@@ -75,7 +75,7 @@ class UsuarioRepository {
                 usuario.id = row.id;
                 usuario.status = row.status;
                 usuario.diaSuspensao = row.diaSuspensao;
-                usuario.suspensaoAte = row.suspensaoAte;
+                usuario.suspensaoAte = row.suspensaoAte ? new Date(row.suspensaoAte) : undefined;
                 return usuario;
             });
         }
@@ -90,6 +90,7 @@ class UsuarioRepository {
             SET nome = ?, email = ?, categoriaId = ?, cursoId = ?, status = ?, diaSuspensao = ?, suspensaoAte = ?
             WHERE cpf = ?`;
         try {
+            const suspensaoAteISO = usuario.suspensaoAte ? usuario.suspensaoAte.toISOString().slice(0, 10) : null;
             const resultado = await (0, mysql_1.executarComandoSQL)(query, [
                 usuario.nome,
                 usuario.email,
@@ -97,7 +98,7 @@ class UsuarioRepository {
                 usuario.cursoId,
                 usuario.status,
                 usuario.diaSuspensao,
-                usuario.suspensaoAte,
+                suspensaoAteISO,
                 usuario.cpf,
             ]);
             if (resultado.affectedRows > 0) {
