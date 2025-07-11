@@ -52,7 +52,9 @@ app.put("/library/emprestimos/:id/devolucao", emprestimoController.registrarDevo
 app.post("/library/categorias-usuario", catUsuController.criarCategoriaUsuario.bind(catUsuController));
 app.get("/library/categorias-usuario", catUsuController.listarCategorias.bind(catUsuController));
 app.delete("/library/categorias-usuario/:id", catUsuController.deletarCategoria.bind(catUsuController));
+app.post("/library/cursos", cursoController.criarCurso.bind(cursoController));
 app.get("/library/cursos", cursoController.listarCursos.bind(cursoController));
+app.delete("/library/cursos/:id", cursoController.deletarCategoria.bind(cursoController));
 app.post("/library/categorias-livro", categoriaLivroController.criarCategoriaLivro.bind(categoriaLivroController));
 app.get("/library/categorias-livro", categoriaLivroController.listarCategorias.bind(categoriaLivroController));
 app.delete("/library/categorias-livro/:id", categoriaLivroController.deletarCategoria.bind(categoriaLivroController));

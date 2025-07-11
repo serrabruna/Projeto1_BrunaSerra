@@ -5,7 +5,9 @@ const Curso_1 = require("../model/entity/Curso");
 const mysql_1 = require("../database/mysql");
 class CursoRepository {
     static instance;
-    constructor() { }
+    constructor() {
+        this.createTable();
+    }
     static getInstance() {
         if (!this.instance) {
             this.instance = new CursoRepository;
@@ -22,27 +24,57 @@ class CursoRepository {
             console.log("Tabela Curso criada com sucesso:", resultado);
         }
         catch (err) {
-            console.error("Erro ao executar a query:", err);
+            console.error("Erro ao criar tabela Curso:", err);
         }
     }
     async insertCurso(nome) {
-        const resultado = await (0, mysql_1.executarComandoSQL)("INSERT INTO biblioteca.Curso (nome) VALUES (?)", [nome]);
-        const newCurso = new Curso_1.Curso(nome);
-        newCurso.id = resultado.insertId;
-        +console.log("Curso inserido com sucesso:", newCurso);
-        return newCurso;
+        try {
+            const resultado = await (0, mysql_1.executarComandoSQL)("INSERT INTO biblioteca.Curso (nome) VALUES (?)", [nome]);
+            const newCurso = new Curso_1.Curso(nome, resultado.insertId);
+            +console.log("Curso inserido com sucesso:", newCurso);
+            return newCurso;
+        }
+        catch (err) {
+            console.log("Erro ao inserir curso no repositório: ", err);
+            throw err;
+        }
     }
     async listarCursos() {
-        const resultado = await (0, mysql_1.executarComandoSQL)("SELECT * FROM biblioteca.Curso", []);
-        return resultado.map((row) => new Curso_1.Curso(row.id, row.nome));
+        try {
+            const resultado = await (0, mysql_1.executarComandoSQL)("SELECT * FROM biblioteca.Curso", []);
+            return resultado.map((row) => {
+                const curso = new Curso_1.Curso(row.nome, row.id);
+                return curso;
+            });
+        }
+        catch (err) {
+            console.error("Erro ao listar cursos no repositório: ", err);
+            throw err;
+        }
     }
     async buscarPorId(id) {
-        const resultado = await (0, mysql_1.executarComandoSQL)("SELECT * FROM biblioteca.Curso WHERE id = ?", [id]);
-        if (resultado.length > 0) {
-            const row = resultado[0];
-            return new Curso_1.Curso(row.id, row.nome);
+        try {
+            const resultado = await (0, mysql_1.executarComandoSQL)("SELECT * FROM biblioteca.Curso WHERE id = ?", [id]);
+            if (resultado.length > 0) {
+                const row = resultado[0];
+                return new Curso_1.Curso(row.nome, row.id);
+            }
+            return undefined;
         }
-        return undefined;
+        catch (err) {
+            console.error("Erro ao buscar curso no repositório: ", err);
+            throw err;
+        }
+    }
+    async deletarCurso(id) {
+        try {
+            const resultado = await (0, mysql_1.executarComandoSQL)("DELETE FROM biblioteca.Curso WHERE id = ?", [id]);
+            return resultado.affectedRows > 0;
+        }
+        catch (err) {
+            console.error("Erro ao deletar curso no repositório:", err);
+            throw err;
+        }
     }
 }
 exports.CursoRepository = CursoRepository;
