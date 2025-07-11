@@ -4,7 +4,9 @@ import { executarComandoSQL } from "../database/mysql";
 export class LivroRepository {
     private static instance: LivroRepository;
   
-    constructor() {}
+    private constructor() {
+        this.createTable
+    }
 
     public static getInstance(): LivroRepository {
         if (!this.instance) {
@@ -13,7 +15,7 @@ export class LivroRepository {
         return this.instance;
     }
 
-    async createTable(){
+    private async createTable(){
         const query = ` CREATE TABLE IF NOT EXISTS biblioteca.Livro (
             id INT AUTO_INCREMENT PRIMARY KEY,
             isbn VARCHAR(13) NOT NULL UNIQUE,
@@ -28,7 +30,7 @@ export class LivroRepository {
             const resultado = await executarComandoSQL(query, []);
             console.log("Tabela Livro criada com sucesso:", resultado);
         } catch (err) {
-            console.error("Erro ao criar tabela livro:", err);
+            console.error("Erro ao criar tabela Livro:", err);
         }
     }
 

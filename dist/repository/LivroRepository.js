@@ -5,7 +5,9 @@ const Livro_1 = require("../model/entity/Livro");
 const mysql_1 = require("../database/mysql");
 class LivroRepository {
     static instance;
-    constructor() { }
+    constructor() {
+        this.createTable;
+    }
     static getInstance() {
         if (!this.instance) {
             this.instance = new LivroRepository();
@@ -28,7 +30,7 @@ class LivroRepository {
             console.log("Tabela Livro criada com sucesso:", resultado);
         }
         catch (err) {
-            console.error("Erro ao criar tabela livro:", err);
+            console.error("Erro ao criar tabela Livro:", err);
         }
     }
     async insertLivro(isbn, titulo, autor, editora, edicao, categoriaId) {
