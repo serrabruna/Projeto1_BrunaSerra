@@ -4,7 +4,9 @@ import { executarComandoSQL } from "../database/mysql";
 export class CategoriaLivroRepository{
     private static instance: CategoriaLivroRepository;
 
-    constructor(){}
+    private constructor(){
+        this.createTable();
+    }
 
     public static getInstance(): CategoriaLivroRepository {
         if(!this.instance){
@@ -13,7 +15,7 @@ export class CategoriaLivroRepository{
         return this.instance;
     }
 
-    async createTable(){
+    private async createTable(){
         const query = ` CREATE TABLE IF NOT EXISTS biblioteca.CategoriaLivro (
             id INT PRIMARY KEY AUTO_INCREMENT,
             nome VARCHAR(255) NOT NULL UNIQUE
@@ -22,7 +24,7 @@ export class CategoriaLivroRepository{
             const resultado = await executarComandoSQL(query, []);
             console.log("Tabela CategoriaLivro criada com sucesso:", resultado);
         } catch (err) {
-            console.error("Erro ao executar a query:", err);
+            console.error("Erro ao criar tabela CategoriaLivro:", err);
         }
     }
 
@@ -31,8 +33,7 @@ export class CategoriaLivroRepository{
             "INSERT INTO biblioteca.CategoriaLivro (nome) VALUES (?)",
             [nome]
         );
-        const newCategoriaLivro = new CategoriaLivro(nome);
-        newCategoriaLivro.id = resultado.insertId;
+        const newCategoriaLivro = new CategoriaLivro(nome, resultado.insertId);
         +console.log("Categoria de livro inserida com sucesso:", newCategoriaLivro);
         return newCategoriaLivro;
     }

@@ -6,6 +6,7 @@ class CategoriaUsuario {
     nome;
     constructor(nome, id) {
         this.nome = nome;
+        this.id = id;
     }
 }
 exports.CategoriaUsuario = CategoriaUsuario;

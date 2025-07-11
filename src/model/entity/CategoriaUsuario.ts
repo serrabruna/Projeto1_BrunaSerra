@@ -3,7 +3,8 @@ export class CategoriaUsuario{
   nome: string;
 
   constructor(nome: string, id?: number){
-    this. nome = nome;
+    this.nome = nome;
+    this.id = id;
   }
 
 }

@@ -45,7 +45,9 @@ app.post("/library/emprestimos", emprestimoController.criarEmprestimo.bind(empre
 app.get("/library/emprestimos", emprestimoController.listarEmprestimos.bind(emprestimoController));
 app.put("/library/emprestimos/:id/devolucao", emprestimoController.registrarDevolucao.bind(emprestimoController));
 //Catalogos
+app.post("/library/categorias-usuario", catUsuController.criarCategoriaUsuario.bind(catUsuController));
 app.get("/library/categorias-usuario", catUsuController.listarCategorias.bind(catUsuController));
+app.delete("/library/categorias-usuario/:id", catUsuController.deletarCategoria.bind(catUsuController));
 app.get("/library/cursos", cursoController.listarCursos.bind(cursoController));
 app.get("/library/categorias-livro", categoriaLivroController.listarCategorias.bind(categoriaLivroController));
 app.listen(PORT, () => console.log("Servidor rodando em http://localhost:3090"));
