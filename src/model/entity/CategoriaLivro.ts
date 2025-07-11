@@ -4,5 +4,6 @@ export class CategoriaLivro{
 
     constructor(nome: string, id?: number){
         this.nome = nome;
+        this.id = id;
     }
 }

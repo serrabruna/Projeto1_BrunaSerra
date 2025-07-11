@@ -39,7 +39,7 @@ class CategoriaUsuarioController {
     async deletarCategoria(req, res) {
         const id = parseInt(req.params.id);
         try {
-            const estoque = await this.catUsuService.deletarCategoria(id);
+            const categoria = await this.catUsuService.deletarCategoria(id);
             res.status(204).send();
         }
         catch (error) {

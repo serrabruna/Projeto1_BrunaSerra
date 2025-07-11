@@ -1,7 +1,9 @@
 import { CategoriaUsuarioRepository } from "../repository/CategoriaUsuarioRepository";
 import { CategoriaUsuario } from "../model/entity/CategoriaUsuario";
+import { UsuarioRepository } from "../repository/UsuarioRepository";
 
 export class CategoriaUsuarioService{
+    usuarioRepository = UsuarioRepository.getInstance();
     categoriaUsuRepository = CategoriaUsuarioRepository.getInstance();
 
     async listarCategorias(): Promise <CategoriaUsuario[]>{
@@ -13,13 +15,9 @@ export class CategoriaUsuarioService{
         }
     }
 
-    async buscarPorId(id: number): Promise <CategoriaUsuario> {
+    async buscarPorId(id: number): Promise <CategoriaUsuario | undefined> {
         try{
-            const categoria = await this.categoriaUsuRepository.buscarPorId(id);
-            if (!categoria) {
-                throw new Error("Categoria de usuário não encontrada.");
-            }
-            return categoria;
+            return await this.categoriaUsuRepository.buscarPorId(id);
         }catch(error){
             console.error("Erro ao buscar categoria de usuário no serviço: ", error);
             throw error;
@@ -52,15 +50,14 @@ export class CategoriaUsuarioService{
                 throw new Error("Categoria de usuário não encontrada para exclusão.");
             }
 
-            const usuarioRepository = (await import("../repository/UsuarioRepository")).UsuarioRepository.getInstance();
-            const usuariosVinculados = await usuarioRepository.listarUsuarios(); 
+            const usuariosVinculados = await this.usuarioRepository.listarUsuarios(); 
             const temUsuariosVinculados = usuariosVinculados.some(user => user.categoriaId === id);
 
             if (temUsuariosVinculados) {
                 throw new Error("Não é possível deletar a categoria: existem usuários vinculados a ela.");
             }
 
-            const deletada = await this.categoriaUsuRepository.deletarCategoria(id); // Assume que o repositório tem este método
+            const deletada = await this.categoriaUsuRepository.deletarCategoria(id);
             
             if (!deletada) { 
                 throw new Error("Erro inesperado ao deletar a categoria de usuário.");

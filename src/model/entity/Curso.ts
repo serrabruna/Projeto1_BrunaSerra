@@ -3,7 +3,9 @@ export class Curso{
     nome: string;
 
     constructor(nome: string, id?: number){
-        this. nome = nome;
+        this.nome = nome;
+        this.id = id;
+
     }
 
 }

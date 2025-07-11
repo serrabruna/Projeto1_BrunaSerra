@@ -6,6 +6,7 @@ class CategoriaLivro {
     nome;
     constructor(nome, id) {
         this.nome = nome;
+        this.id = id;
     }
 }
 exports.CategoriaLivro = CategoriaLivro;
