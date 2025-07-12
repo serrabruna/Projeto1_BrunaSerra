@@ -4,7 +4,7 @@ import { executarComandoSQL } from "../database/mysql";
 export class UsuarioRepository {
     private static instance: UsuarioRepository;
 
-    private constructor() {
+    constructor() {
         this.createTable();
     }
 
@@ -15,19 +15,17 @@ export class UsuarioRepository {
         return this.instance;
     }
 
-    private async createTable() {
+    async createTable() {
         const query = ` CREATE TABLE IF NOT EXISTS biblioteca.Usuario (
                 id INT AUTO_INCREMENT PRIMARY KEY,
                 cpf VARCHAR(11) NOT NULL UNIQUE,
                 nome VARCHAR(255) NOT NULL,
                 email VARCHAR(255) NOT NULL,
-                categoriaId INT NOT NULL,
-                cursoId INT NOT NULL,
+                categoriaId INT,
+                cursoId INT,
                 status VARCHAR(10) DEFAULT 'ativo',
                 diaSuspensao INT DEFAULT 0,
-                suspensaoAte DATE,
-                FOREIGN KEY (categoriaId) REFERENCES biblioteca.CategoriaUsuario(id),
-                FOREIGN KEY (cursoId) REFERENCES biblioteca.Curso(id)
+                suspensaoAte DATE
                 )`;
         try {
             const resultado = await executarComandoSQL(query, []);

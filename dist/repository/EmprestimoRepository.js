@@ -24,10 +24,8 @@ class EmprestimoRepository {
                 dataDevolucaoPrevista DATETIME NOT NULL,
                 dataEntrega DATETIME,
                 diasAtraso INT DEFAULT 0,
-                suspensaoAte DATETIME, 
-                FOREIGN KEY (usuarioId) REFERENCES biblioteca.Usuario(id),
-                FOREIGN KEY (codigoExemplar) REFERENCES biblioteca.Estoque(codigo)
-            )`;
+                suspensaoAte DATETIME
+            );`;
         try {
             await (0, mysql_1.executarComandoSQL)(query, []);
             console.log("Tabela Emprestimo criada com sucesso.");

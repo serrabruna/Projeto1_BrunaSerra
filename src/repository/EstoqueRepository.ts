@@ -4,7 +4,7 @@ import { executarComandoSQL } from "../database/mysql";
 export class EstoqueRepository {
     private static instance: EstoqueRepository;
 
-    private constructor() {
+    constructor() {
         this.createTable();
     }
 
@@ -22,9 +22,8 @@ export class EstoqueRepository {
                 livro_isbn VARCHAR(13) NOT NULL UNIQUE,
                 quantidade INT NOT NULL,
                 quantidade_emprestada INT DEFAULT 0,
-                status ENUM('disponivel', 'emprestado') DEFAULT 'disponivel',
-                FOREIGN KEY (livro_isbn) REFERENCES biblioteca.Livro(isbn)
-            )`;
+                status ENUM('disponivel', 'emprestado') DEFAULT 'disponivel'
+            );`;
         try {
             await executarComandoSQL(query, []);
             console.log("Tabela Estoque criada com sucesso (modelo de resumo por ISBN).");

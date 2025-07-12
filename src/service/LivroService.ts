@@ -153,10 +153,6 @@ export class LivroService {
             const todosOsExemplares = await this.estoqueRepository.listarEstoque();
             const exemplaresVinculadosAoLivro = todosOsExemplares.filter((e) => e.livro_isbn === isbn);
 
-            if (exemplaresVinculadosAoLivro.length > 0) {
-                throw new Error("Não é possível remover o livro: existem exemplares vinculados no estoque.");
-            }
-
             const emprestimos = await this.emprestimoRepository.listarEmprestimos();
             if (exemplaresVinculadosAoLivro.length > 0) {
                 const temExemplarEmprestado = exemplaresVinculadosAoLivro.some(e => e.status === 'emprestado');

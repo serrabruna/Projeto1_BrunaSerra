@@ -51,7 +51,7 @@ export class CursoService{
             }
 
             const usuariosVinculados = await this.usuarioRepository.listarUsuarios(); 
-            const temUsuariosVinculados = usuariosVinculados.some(user => user.categoriaId === id);
+            const temUsuariosVinculados = usuariosVinculados.some(user => user.cursoId === id);
 
             if (temUsuariosVinculados) {
                 throw new Error("Não é possível deletar o curso: existem usuários vinculados a ela.");

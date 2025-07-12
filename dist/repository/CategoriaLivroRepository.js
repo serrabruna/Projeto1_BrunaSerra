@@ -18,7 +18,7 @@ class CategoriaLivroRepository {
         const query = ` CREATE TABLE IF NOT EXISTS biblioteca.CategoriaLivro (
             id INT PRIMARY KEY AUTO_INCREMENT,
             nome VARCHAR(255) NOT NULL UNIQUE
-            )`;
+            );`;
         try {
             const resultado = await (0, mysql_1.executarComandoSQL)(query, []);
             console.log("Tabela CategoriaLivro criada com sucesso:", resultado);

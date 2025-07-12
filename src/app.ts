@@ -21,11 +21,6 @@ const PORT = process.env.PORT ?? 3090;
 app.use(express.json());
 
 //Usuário
-app.post("/library/usuarios", usuarioController.criarUsuario.bind(usuarioController));
-app.get("/library/usuarios", usuarioController.listarUsuarios.bind(usuarioController));
-app.get("/library/usuarios/:cpf", usuarioController.buscarUsuario.bind(usuarioController));
-app.put("/library/usuarios/:cpf", usuarioController.atualizarUsuario.bind(usuarioController));
-app.delete("/library/usuarios/:cpf", usuarioController.removerUsuario.bind(usuarioController));
 
 
 //Livro

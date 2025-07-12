@@ -4,7 +4,7 @@ import { executarComandoSQL } from "../database/mysql";
 export class EmprestimoRepository {
     private static instance: EmprestimoRepository;
 
-    private constructor() {
+    constructor() {
         this.createTable();
     }
 
@@ -25,10 +25,8 @@ export class EmprestimoRepository {
                 dataDevolucaoPrevista DATETIME NOT NULL,
                 dataEntrega DATETIME,
                 diasAtraso INT DEFAULT 0,
-                suspensaoAte DATETIME, 
-                FOREIGN KEY (usuarioId) REFERENCES biblioteca.Usuario(id),
-                FOREIGN KEY (codigoExemplar) REFERENCES biblioteca.Estoque(codigo)
-            )`;
+                suspensaoAte DATETIME
+            );`;
         try {
             await executarComandoSQL(query, []);
             console.log("Tabela Emprestimo criada com sucesso.");

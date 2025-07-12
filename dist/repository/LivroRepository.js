@@ -22,9 +22,8 @@ class LivroRepository {
             autor VARCHAR(255) NOT NULL,
             editora VARCHAR(255) NOT NULL,
             edicao VARCHAR(255) NOT NULL,
-            categoriaId INT NOT NULL,
-            FOREIGN KEY (categoriaId) REFERENCES biblioteca.CategoriaLivro(id)
-            )`;
+            categoriaId INT NOT NULL
+            );`;
         try {
             const resultado = await (0, mysql_1.executarComandoSQL)(query, []);
             console.log("Tabela Livro criada com sucesso:", resultado);

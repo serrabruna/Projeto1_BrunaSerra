@@ -21,9 +21,8 @@ class EstoqueRepository {
                 livro_isbn VARCHAR(13) NOT NULL UNIQUE,
                 quantidade INT NOT NULL,
                 quantidade_emprestada INT DEFAULT 0,
-                status ENUM('disponivel', 'emprestado') DEFAULT 'disponivel',
-                FOREIGN KEY (livro_isbn) REFERENCES biblioteca.Livro(isbn)
-            )`;
+                status ENUM('disponivel', 'emprestado') DEFAULT 'disponivel'
+            );`;
         try {
             await (0, mysql_1.executarComandoSQL)(query, []);
             console.log("Tabela Estoque criada com sucesso (modelo de resumo por ISBN).");

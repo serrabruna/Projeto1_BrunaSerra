@@ -4,7 +4,7 @@ import { executarComandoSQL } from "../database/mysql";
 export class LivroRepository {
     private static instance: LivroRepository;
   
-    private constructor() {
+    constructor() {
         this.createTable
     }
 
@@ -15,7 +15,7 @@ export class LivroRepository {
         return this.instance;
     }
 
-    private async createTable(){
+    async createTable(){
         const query = ` CREATE TABLE IF NOT EXISTS biblioteca.Livro (
             id INT AUTO_INCREMENT PRIMARY KEY,
             isbn VARCHAR(13) NOT NULL UNIQUE,
@@ -23,9 +23,8 @@ export class LivroRepository {
             autor VARCHAR(255) NOT NULL,
             editora VARCHAR(255) NOT NULL,
             edicao VARCHAR(255) NOT NULL,
-            categoriaId INT NOT NULL,
-            FOREIGN KEY (categoriaId) REFERENCES biblioteca.CategoriaLivro(id)
-            )`;
+            categoriaId INT NOT NULL
+            );`;
         try {
             const resultado = await executarComandoSQL(query, []);
             console.log("Tabela Livro criada com sucesso:", resultado);

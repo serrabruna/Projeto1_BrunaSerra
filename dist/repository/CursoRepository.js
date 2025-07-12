@@ -18,7 +18,7 @@ class CursoRepository {
         const query = ` CREATE TABLE IF NOT EXISTS biblioteca.Curso (
             id INT PRIMARY KEY AUTO_INCREMENT,
             nome VARCHAR(255) NOT NULL UNIQUE
-            )`;
+            );`;
         try {
             const resultado = await (0, mysql_1.executarComandoSQL)(query, []);
             console.log("Tabela Curso criada com sucesso:", resultado);

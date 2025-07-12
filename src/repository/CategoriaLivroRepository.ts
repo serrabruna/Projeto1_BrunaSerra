@@ -5,7 +5,7 @@ import { error } from "console";
 export class CategoriaLivroRepository{
     private static instance: CategoriaLivroRepository;
 
-    private constructor(){
+    constructor(){
         this.createTable();
     }
 
@@ -16,11 +16,11 @@ export class CategoriaLivroRepository{
         return this.instance;
     }
 
-    private async createTable(){
+    async createTable(){
         const query = ` CREATE TABLE IF NOT EXISTS biblioteca.CategoriaLivro (
             id INT PRIMARY KEY AUTO_INCREMENT,
             nome VARCHAR(255) NOT NULL UNIQUE
-            )`;
+            );`;
         try {
             const resultado = await executarComandoSQL(query, []);
             console.log("Tabela CategoriaLivro criada com sucesso:", resultado);
