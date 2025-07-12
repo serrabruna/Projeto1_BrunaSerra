@@ -1,89 +1,94 @@
 import { LivroService } from "../service/LivroService";
-import { Request, Response } from "express";
+import { Body, Controller, Delete, Get, Path, Post, Put, Query, Res, Route, Tags, TsoaResponse } from "tsoa";
+import { BasicResponseDto } from "../model/dto/BasicResponseDto";
+import { LivroDto } from "../model/dto/LivroDto";
+import { LivroRequestDto } from "../model/dto/LivroRequestDto";
 
+@Route("livros")
+@Tags("livro")
 export class LivroController{
     private livroService = new LivroService();
 
-    async criarLivro(req: Request, res: Response): Promise<void>{
+    @Post()
+    async criarLivro(
+        @Body() dto: LivroRequestDto,
+        @Res() fail: TsoaResponse<400, BasicResponseDto>,
+        @Res() success: TsoaResponse<201, BasicResponseDto>
+    ): Promise<void>{
         try{
-            const livro = await this.livroService.AdicionarLivro(req.body);
-            res.status(201).json(livro);
-        }catch(error: unknown){
-            let message: string = "Não foi possível criar o registro";
-            if(error instanceof Error){
-                message = error.message;
-            }
-            res.status(400).json({
-                message: message
-            });
+            const livro = await this.livroService.AdicionarLivro(dto);
+            return success(201, new BasicResponseDto("Livro cadastrado com sucesso!", livro));
+        }catch(error: any){
+            return fail(400, new BasicResponseDto(error.message, undefined));            
         }
     }
 
-    async listarLivro(req: Request, res: Response): Promise<void>{
-        try{
-            const filtros = req.query;
-            const livro = await this.livroService.listarLivroComFiltro(filtros);
-            res.status(201).json(livro);
-        }
-        catch(error: unknown){
-            let message: string = "Não foi possível listar os livros";
-            if(error instanceof Error){
-                message = error.message;
-            }
-            res.status(400).json({
-                message: message
-            });
+    @Get() 
+    async listarLivroComFiltro(
+        @Query() filtros: any, 
+        @Res() success: TsoaResponse<200, BasicResponseDto>,
+        @Res() errorResponse: TsoaResponse<500, BasicResponseDto>
+    ): Promise<void> {
+        try {
+            const livros = await this.livroService.listarLivroComFiltro(filtros); 
+            return success(200, new BasicResponseDto("Livros listados com sucesso!", livros));
+        } catch (error: any) {
+            return errorResponse(500, new BasicResponseDto(error.message, undefined));
         }
     }
 
-    async buscarLivro(req: Request, res: Response): Promise<void>{
-        const isbn = req.params.isbn;
+    @Get("isbn/{isbn}")
+    async buscarLivro(
+        @Path() isbn: string,
+        @Res() notFound: TsoaResponse<400, BasicResponseDto>,
+        @Res() success: TsoaResponse<200, BasicResponseDto>
+    ): Promise<void>{
         try{
             const livro = await this.livroService.buscarLivroPorISBN(isbn);
-            res.status(201).json(livro);
+            return success(200, new BasicResponseDto("Livro encontrado!", livro));
         }
-        catch(error: unknown){
-            let message: string = "Não foi possível retornar o livro";
-            if(error instanceof Error){
-                message = error.message;
-            }
-            res.status(400).json({
-                message: message
-            });
+        catch(error: any){
+            return notFound(400, new BasicResponseDto(error.message, undefined));
         }
     }
 
-    async atualizarLivro(req: Request, res: Response): Promise<void>{
-        const isbn = req.params.isbn;
+    @Put("isbn/{isbn}")
+    async atualizarLivro(
+        @Path() isbn: string,
+        @Body() dto: LivroRequestDto,
+        @Res() notFound: TsoaResponse<400, BasicResponseDto>,
+        @Res() success: TsoaResponse<200, BasicResponseDto>
+    ): Promise<void>{
         try{
-            const livro = await this.livroService.atualizarLivro(isbn, req.body);
-            res.status(201).json(livro);
+            const livro = await this.livroService.atualizarLivro(isbn, dto);
+            const responseDto = new LivroDto(
+                            livro.id!,
+                            livro.isbn,
+                            livro.titulo,
+                            livro.autor,
+                            livro.editora,
+                            livro.edicao,
+                            livro.categoriaId
+            );
+            return success(200, new BasicResponseDto("Livro atualizado com sucesso!", responseDto));
         }
-        catch(error: unknown){
-            let message: string = "Não foi possível atualizar informações do livro";
-            if(error instanceof Error){
-                message = error.message;
-            }
-            res.status(400).json({
-                message: message
-            });
+        catch(error: any){
+            return notFound(400, new BasicResponseDto(error.message, undefined));
         }
     }
 
-    async removerLivro(req: Request, res: Response): Promise<void>{
-        const isbn = req.params.isbn;
+    @Delete("isbn/{isbn}")
+    async removerLivro(
+        @Path() isbn: string,
+        @Res() notFound: TsoaResponse<400, BasicResponseDto>,
+        @Res() success: TsoaResponse<200, BasicResponseDto>
+    ): Promise<void>{
         try{
             const livro = await this.livroService.removerLivro(isbn);
-            res.status(204).send();
+            return success(200, new BasicResponseDto("Livro deletado com sucesso!", livro));
         }
-        catch(error: unknown){
-            let message: string = "Não foi possível remover livro";
-            if(error instanceof Error){
-                message = error.message;
-            }
-            res.status(400).json({
-                message: message
-            });
+        catch(error: any){
+            return notFound(400, new BasicResponseDto(error.message, undefined));
         }
     }
 }

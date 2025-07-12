@@ -43,6 +43,31 @@
 				],
 				"type": "object",
 				"additionalProperties": false
+			},
+			"LivroRequestDto": {
+				"properties": {
+					"isbn": {
+						"type": "string"
+					},
+					"titulo": {
+						"type": "string"
+					},
+					"autor": {
+						"type": "string"
+					},
+					"editora": {
+						"type": "string"
+					},
+					"edicao": {
+						"type": "string"
+					},
+					"categoriaId": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"type": "object",
+				"additionalProperties": false
 			}
 		},
 		"securitySchemes": {}
@@ -270,11 +295,236 @@
 					}
 				]
 			}
+		},
+		"/livros": {
+			"post": {
+				"operationId": "CriarLivro",
+				"responses": {
+					"201": {
+						"description": "",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/BasicResponseDto"
+								}
+							}
+						}
+					},
+					"204": {
+						"description": "No content"
+					},
+					"400": {
+						"description": "",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/BasicResponseDto"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"livro"
+				],
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/LivroRequestDto"
+							}
+						}
+					}
+				}
+			},
+			"get": {
+				"operationId": "ListarLivroComFiltro",
+				"responses": {
+					"200": {
+						"description": "",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/BasicResponseDto"
+								}
+							}
+						}
+					},
+					"204": {
+						"description": "No content"
+					},
+					"500": {
+						"description": "",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/BasicResponseDto"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"livro"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "query",
+						"name": "filtros",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
+		"/livros/isbn/{isbn}": {
+			"get": {
+				"operationId": "BuscarLivro",
+				"responses": {
+					"200": {
+						"description": "",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/BasicResponseDto"
+								}
+							}
+						}
+					},
+					"204": {
+						"description": "No content"
+					},
+					"400": {
+						"description": "",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/BasicResponseDto"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"livro"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "isbn",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			},
+			"put": {
+				"operationId": "AtualizarLivro",
+				"responses": {
+					"200": {
+						"description": "",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/BasicResponseDto"
+								}
+							}
+						}
+					},
+					"204": {
+						"description": "No content"
+					},
+					"400": {
+						"description": "",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/BasicResponseDto"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"livro"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "isbn",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/LivroRequestDto"
+							}
+						}
+					}
+				}
+			},
+			"delete": {
+				"operationId": "RemoverLivro",
+				"responses": {
+					"200": {
+						"description": "",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/BasicResponseDto"
+								}
+							}
+						}
+					},
+					"204": {
+						"description": "No content"
+					},
+					"400": {
+						"description": "",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/BasicResponseDto"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"livro"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "isbn",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
 		}
 	},
 	"servers": [
 		{
-			"url": "http://localhost:3040/api",
+			"url": "http://localhost:3090/library",
 			"description": "Servidor de Desenvolvimento"
 		}
 	]

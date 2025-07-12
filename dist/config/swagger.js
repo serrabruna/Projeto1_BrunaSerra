@@ -10,6 +10,6 @@ const fs_1 = __importDefault(require("fs"));
 const swaggerFile = path_1.default.join(__dirname, '../swagger.json');
 const swaggerSpec = JSON.parse(fs_1.default.readFileSync(swaggerFile, 'utf8'));
 const setupSwagger = (app) => {
-    app.use('/api-docs', swagger_ui_express_1.default.serve, swagger_ui_express_1.default.setup(swaggerSpec));
+    app.use('/library', swagger_ui_express_1.default.serve, swagger_ui_express_1.default.setup(swaggerSpec));
 };
 exports.setupSwagger = setupSwagger;
