@@ -1,11 +1,10 @@
 export class LivroRequestDto{
-    id?: number;
-    isbn: string;
-    titulo: string;
-    autor: string;
-    editora: string;
-    edicao: string;
-    categoriaId: number;
+    isbn?: string;
+    titulo?: string;
+    autor?: string;
+    editora?: string;
+    edicao?: string;
+    categoriaId?: number;
 
     constructor(isbn: string, titulo: string, autor: string, editora: string, edicao: string, categoriaId: number, id?: number){
         this.isbn = isbn;
@@ -14,6 +13,5 @@ export class LivroRequestDto{
         this.editora = editora;
         this.edicao = edicao;
         this.categoriaId = categoriaId;
-        this.id = id;
     }
 }
