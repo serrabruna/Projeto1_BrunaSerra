@@ -1,107 +1,100 @@
 import { UsuarioService } from "../service/UsuarioService";
-import { Request, Response } from "express";
+import { Body, Controller, Delete, Get, Path, Post, Put, Query, Res, Route, Tags, TsoaResponse } from "tsoa";
+import { BasicResponseDto } from "../model/dto/BasicResponseDto";
+import { UsuarioDto } from "../model/dto/UsuarioDto";
+import { Usuario } from "../model/entity/Usuario";
+import { UsuarioRequestDto } from "../model/dto/UsuarioRequestDto";
 
+@Route("usuario")
+@Tags("Usuario")
 export class UsuarioController{
     private usuarioService = new UsuarioService();
 
-    async criarUsuario(req: Request, res: Response): Promise <void>{
+    @Post()
+    async criarUsuario(
+        @Body() dto: UsuarioRequestDto,
+        @Res() fail: TsoaResponse<400, BasicResponseDto>,
+        @Res() success: TsoaResponse<201, BasicResponseDto>
+    ): Promise <void>{
         try{
-            const usuario = await this.usuarioService.cadastrarUsuario(req.body);
-            res.status(201).json(usuario);
-        }catch(error: unknown){
-            let message: string = "Não foi possível criar o registro";
-            if(error instanceof Error){
-                message = error.message;
-            }
-            res.status(400).json({
-                message: message
-            });
+            const usuario = await this.usuarioService.cadastrarUsuario(dto);
+            return success(201, new BasicResponseDto("Usuário cadastrado com sucesso!", usuario));
+        }catch(error: any){
+            return fail(400, new BasicResponseDto(error.message, undefined));
         }
     }
 
-    async listarUsuarios(req: Request, res: Response): Promise<void>{
+    @Get("all")
+    async listarUsuario(
+        @Res() notFound: TsoaResponse<400, BasicResponseDto>,
+        @Res() success: TsoaResponse<200, BasicResponseDto>
+    ): Promise<void>{
         try{
-            const usuario = await this.usuarioService.listarUsuarios();
-            res.status(201).json(usuario);
+            const usuarios: Usuario[] = await this.usuarioService.listarUsuarios();
+            return success(200, new BasicResponseDto("Usuarios listados com sucesso!", usuarios));
         }
-        catch(error: unknown){
-            let message: string = "Não foi possível listar os usuários";
-            if(error instanceof Error){
-                message = error.message;
-            }
-            res.status(400).json({
-                message: message
-            });
+        catch(error: any){
+            return notFound(400, new BasicResponseDto(error.message, undefined));
         }
     }
 
-    async listarUsuarioComFiltro(req: Request, res: Response): Promise<void>{
-        try{
-            const filtros = req.query;
-            const usuario = await this.usuarioService.listarUsuarioComFiltro(filtros);
-            res.status(201).json(usuario);
-        }
-        catch(error: unknown){
-            let message: string = "Não foi possível listar os usuários";
-            if(error instanceof Error){
-                message = error.message;
-            }
-            res.status(400).json({
-                message: message
-            });
-        }
-    }
-
-    async buscarUsuario(req: Request, res: Response): Promise<void>{
-        const cpf = req.params.cpf;
+    @Get("cpf/{cpf}")
+    async buscarUsuario(
+        @Path() cpf: string,
+        @Res() notFound: TsoaResponse<400, BasicResponseDto>,
+        @Res() success: TsoaResponse<200, BasicResponseDto>
+    ): Promise<void>{
         try{
             const usuario = await this.usuarioService.buscarUsuario(cpf);
-            res.status(201).json(usuario);
+            return success(200, new BasicResponseDto("Usuário encontrado!", usuario));
         }
-        catch(error: unknown){
-            let message: string = "Não foi possível retornar o usuário";
-            if(error instanceof Error){
-                message = error.message;
-            }
-            res.status(400).json({
-                message: message
-            });
+        catch(error: any){
+            return notFound(400, new BasicResponseDto(error.message, undefined));
         }
     }
 
-    async atualizarUsuario(req: Request, res: Response): Promise<void>{
-        const cpf = req.params.cpf;
+    @Put("cpf/{cpf}")
+    async atualizarUsuario(
+        @Path() cpf: string,
+        @Body() dto: UsuarioRequestDto,
+        @Res() notFound: TsoaResponse<400, BasicResponseDto>,
+        @Res() success: TsoaResponse<200, BasicResponseDto>
+    ): Promise<void>{
         try{
-            const usuario = await this.usuarioService.atualizarUsuario(cpf, req.body);
-            res.status(201).json(usuario);
+            const usuario = await this.usuarioService.atualizarUsuario(cpf, dto);
+            const responseDto = new UsuarioDto(
+                usuario.id!,
+                usuario.cpf,
+                usuario.nome,
+                usuario.email,
+                usuario.categoriaId,
+                usuario.cursoId!,
+                usuario.status,
+                usuario.diaSuspensao,
+                usuario.suspensaoAte
+            );
+            return success(200, new BasicResponseDto("Usuário atualizado com sucesso!", responseDto));
         }
-        catch(error: unknown){
-            let message: string = "Não foi possível atualizar usuário";
-            if(error instanceof Error){
-                message = error.message;
-            }
-            res.status(400).json({
-                message: message
-            });
+        catch(error: any){
+            return notFound(400, new BasicResponseDto(error.message, undefined));
         }
     }
 
-    async removerUsuario(req: Request, res: Response): Promise<void>{
-        const cpf = req.params.cpf;
+    @Delete("cpf/{cpf}")
+    async removerUsuario(
+        @Path() cpf: string,
+        @Res() notFound: TsoaResponse<400, BasicResponseDto>,
+        @Res() success: TsoaResponse<200, BasicResponseDto>
+    ): Promise<void>{
         try{
             const usuario = await this.usuarioService.removerUsuario(cpf);
-            res.status(204).send();
+            return success(200, new BasicResponseDto("Usuário deletado com sucesso!", usuario));
         }
-        catch(error: unknown){
-            let message: string = "Não foi possível remover usuário";
-            if(error instanceof Error){
-                message = error.message;
-            }
-            res.status(400).json({
-                message: message
-            });
+        catch(error: any){
+            return notFound(400, new BasicResponseDto(error.message, undefined));
         }
     }
 }
+
 
 

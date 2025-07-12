@@ -1,4 +1,6 @@
 import express from "express";
+import { RegisterRoutes } from "./route/routes";
+import { setupSwagger } from "./config/swagger";
 import { UsuarioController } from './controller/UsuarioController';
 import { CategoriaUsuarioController } from "./controller/CategoriaUsuarioController";
 import { CursoController } from "./controller/CursoController";
@@ -7,7 +9,6 @@ import { CategoriaLivroController } from "./controller/CategoriaLivroController"
 import { EstoqueController } from "./controller/EstoqueController";
 import { EmprestimoController } from "./controller/EmprestimoController";
 
-const usuarioController = new UsuarioController();
 const catUsuController = new CategoriaUsuarioController();
 const cursoController = new CursoController();
 const livroController = new LivroController();
@@ -17,41 +18,15 @@ const emprestimoController = new EmprestimoController();
 
 const app = express();
 
-const PORT = process.env.PORT ?? 3090;
+const PORT = 3090;
 app.use(express.json());
 
-//Usuário
+const apiRouter = express.Router();
+RegisterRoutes(apiRouter);
 
+app.use('/library', apiRouter);
 
-//Livro
-app.post("/library/livros", livroController.criarLivro.bind(livroController));
-app.get("/library/livros", livroController.listarLivro.bind(livroController));
-app.get("/library/livros/:isbn", livroController.buscarLivro.bind(livroController));
-app.put("/library/livros/:isbn", livroController.atualizarLivro.bind(livroController));
-app.delete("/library/livros/:isbn", livroController.removerLivro.bind(livroController));
+RegisterRoutes(app);
+setupSwagger(app);
 
-//Estoque
-app.post("/library/estoque", estoqueController.adicionarAoEstoque.bind(estoqueController));
-app.get("/library/estoque", estoqueController.listarDisponivel.bind(estoqueController));
-app.get("/library/estoque/:codigo", estoqueController.buscarExemplar.bind(estoqueController));
-app.put("/library/estoque/:codigo", estoqueController.atualizarStatus.bind(estoqueController));
-app.delete("/library/estoque/:codigo", estoqueController.RemoverEstoque.bind(estoqueController));
-app.get("/library/estoque/resumo/:isbn", estoqueController.resumoPorISBN.bind(estoqueController));
-
-//Emprestimo 
-app.post("/library/emprestimos", emprestimoController.criarEmprestimo.bind(emprestimoController));
-app.get("/library/emprestimos", emprestimoController.listarEmprestimos.bind(emprestimoController));
-app.put("/library/emprestimos/:id/devolucao", emprestimoController.registrarDevolucao.bind(emprestimoController));
-
-//Catalogos
-app.post("/library/categorias-usuario", catUsuController.criarCategoriaUsuario.bind(catUsuController));
-app.get("/library/categorias-usuario", catUsuController.listarCategorias.bind(catUsuController));
-app.delete("/library/categorias-usuario/:id", catUsuController.deletarCategoria.bind(catUsuController));
-app.post("/library/cursos", cursoController.criarCurso.bind(cursoController));
-app.get("/library/cursos", cursoController.listarCursos.bind(cursoController));
-app.delete("/library/cursos/:id", cursoController.deletarCategoria.bind(cursoController));
-app.post("/library/categorias-livro", categoriaLivroController.criarCategoriaLivro.bind(categoriaLivroController));
-app.get("/library/categorias-livro", categoriaLivroController.listarCategorias.bind(categoriaLivroController));
-app.delete("/library/categorias-livro/:id", categoriaLivroController.deletarCategoria.bind(categoriaLivroController));
-
-app.listen(PORT, () => console.log("Servidor rodando em http://localhost:3090"));
+app.listen(PORT, ()=> console.log("API online na porta: " + PORT));

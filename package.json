@@ -4,7 +4,7 @@
   "main": "index.js",
   "scripts": {
     "start": "node dist/app.js",
-    "build": "npx tsc",
+    "build": "npx tsoa spec-and-routes && npx tsc",
     "dev": "ts-node src/app.ts"
   },
   "repository": {

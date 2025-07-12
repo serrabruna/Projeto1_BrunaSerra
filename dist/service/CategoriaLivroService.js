@@ -49,7 +49,7 @@ class CategoriaLivroService {
                 throw new Error("Categoria de livro não encontrada para exclusão.");
             }
             const livrosVinculados = await this.livroRepository.listarLivros();
-            const temLivrosVinculados = livrosVinculados.some(user => user.categoriaId === id);
+            const temLivrosVinculados = livrosVinculados.some(livro => livro.categoriaId === id);
             if (temLivrosVinculados) {
                 throw new Error("Não é possível deletar a categoria: existem livros vinculados a ela.");
             }
