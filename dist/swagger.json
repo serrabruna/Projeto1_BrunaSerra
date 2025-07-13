@@ -133,6 +133,47 @@
 				"type": "object",
 				"additionalProperties": false
 			},
+			"EmprestimoRequestDto": {
+				"properties": {
+					"cpfUsuario": {
+						"type": "string"
+					},
+					"usuarioId": {
+						"type": "number",
+						"format": "double"
+					},
+					"codigoExemplar": {
+						"type": "number",
+						"format": "double"
+					},
+					"dataEmprestimo": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"dataDevolucaoPrevista": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"dataEntrega": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"diasAtraso": {
+						"type": "number",
+						"format": "double"
+					},
+					"suspensaoAte": {
+						"type": "string",
+						"format": "date-time"
+					}
+				},
+				"required": [
+					"cpfUsuario",
+					"codigoExemplar"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
 			"CursoRequestDto": {
 				"properties": {
 					"nome": {
@@ -881,6 +922,131 @@
 						"required": true,
 						"schema": {
 							"type": "string"
+						}
+					}
+				]
+			}
+		},
+		"/emprestimos": {
+			"post": {
+				"operationId": "CriarEmprestimo",
+				"responses": {
+					"201": {
+						"description": "",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/BasicResponseDto"
+								}
+							}
+						}
+					},
+					"204": {
+						"description": "No content"
+					},
+					"400": {
+						"description": "",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/BasicResponseDto"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"emprestimo"
+				],
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/EmprestimoRequestDto"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/emprestimos/all": {
+			"get": {
+				"operationId": "ListarEmprestimos",
+				"responses": {
+					"200": {
+						"description": "",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/BasicResponseDto"
+								}
+							}
+						}
+					},
+					"204": {
+						"description": "No content"
+					},
+					"400": {
+						"description": "",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/BasicResponseDto"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"emprestimo"
+				],
+				"security": [],
+				"parameters": []
+			}
+		},
+		"/emprestimos/id/{id}/devolucao": {
+			"put": {
+				"operationId": "RegistrarDevolucao",
+				"responses": {
+					"200": {
+						"description": "",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/BasicResponseDto"
+								}
+							}
+						}
+					},
+					"204": {
+						"description": "No content"
+					},
+					"400": {
+						"description": "",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/BasicResponseDto"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"emprestimo"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
 						}
 					}
 				]

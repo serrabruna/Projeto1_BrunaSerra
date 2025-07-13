@@ -3,8 +3,6 @@ import { Body, Controller, Delete, Get, Path, Post, Put, Query, Res, Route, Tags
 import { BasicResponseDto } from "../model/dto/BasicResponseDto";
 import { EstoqueDto } from "../model/dto/EstoqueDto";
 import { EstoqueRequestDto } from "../model/dto/EstoqueRequestDto";
-import { Estoque } from "../model/entity/Estoque";
-import { Request, Response } from "express";
 
 @Route("estoque")
 @Tags("estoque")
