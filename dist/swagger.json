@@ -9,9 +9,6 @@
 		"schemas": {
 			"UsuarioRequestDto": {
 				"properties": {
-					"cpf": {
-						"type": "string"
-					},
 					"nome": {
 						"type": "string"
 					},
@@ -69,6 +66,73 @@
 				"type": "object",
 				"additionalProperties": false
 			},
+			"EstoqueRequestDto": {
+				"properties": {
+					"codigo": {
+						"type": "number",
+						"format": "double"
+					},
+					"livro_isbn": {
+						"type": "string"
+					},
+					"quantidade": {
+						"type": "number",
+						"format": "double"
+					},
+					"quantidade_emprestada": {
+						"type": "number",
+						"format": "double"
+					},
+					"status": {
+						"type": "string",
+						"enum": [
+							"disponivel",
+							"emprestado"
+						]
+					}
+				},
+				"required": [
+					"codigo",
+					"livro_isbn"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"EstoqueDto": {
+				"properties": {
+					"codigo": {
+						"type": "number",
+						"format": "double"
+					},
+					"livro_isbn": {
+						"type": "string"
+					},
+					"quantidade": {
+						"type": "number",
+						"format": "double"
+					},
+					"quantidade_emprestada": {
+						"type": "number",
+						"format": "double"
+					},
+					"status": {
+						"type": "string",
+						"enum": [
+							"disponivel",
+							"emprestado"
+						]
+					}
+				},
+				"required": [
+					"codigo",
+					"livro_isbn",
+					"quantidade",
+					"quantidade_emprestada",
+					"status"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
 			"CursoRequestDto": {
 				"properties": {
 					"nome": {
@@ -114,7 +178,7 @@
 		"description": "Documentação da API usando Swagger"
 	},
 	"paths": {
-		"/usuario": {
+		"/usuarios": {
 			"post": {
 				"operationId": "CriarUsuario",
 				"responses": {
@@ -159,7 +223,7 @@
 				}
 			}
 		},
-		"/usuario/all": {
+		"/usuarios/all": {
 			"get": {
 				"operationId": "ListarUsuario",
 				"responses": {
@@ -194,7 +258,7 @@
 				"parameters": []
 			}
 		},
-		"/usuario/cpf/{cpf}": {
+		"/usuarios/cpf/{cpf}": {
 			"get": {
 				"operationId": "BuscarUsuario",
 				"responses": {
@@ -549,6 +613,271 @@
 					{
 						"in": "path",
 						"name": "isbn",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
+		"/estoque": {
+			"post": {
+				"operationId": "AdicionarAoEstoque",
+				"responses": {
+					"201": {
+						"description": "",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/BasicResponseDto"
+								}
+							}
+						}
+					},
+					"204": {
+						"description": "No content"
+					},
+					"400": {
+						"description": "",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/BasicResponseDto"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"estoque"
+				],
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/EstoqueRequestDto"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/estoque/disponiveis": {
+			"get": {
+				"operationId": "ListarDisponivel",
+				"responses": {
+					"200": {
+						"description": "",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/BasicResponseDto"
+								}
+							}
+						}
+					},
+					"204": {
+						"description": "No content"
+					},
+					"400": {
+						"description": "",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/BasicResponseDto"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"estoque"
+				],
+				"security": [],
+				"parameters": []
+			}
+		},
+		"/estoque/codigo/{codigo}": {
+			"get": {
+				"operationId": "BuscarExemplar",
+				"responses": {
+					"200": {
+						"description": "",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/BasicResponseDto"
+								}
+							}
+						}
+					},
+					"204": {
+						"description": "No content"
+					},
+					"400": {
+						"description": "",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/BasicResponseDto"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"estoque"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "codigo",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				]
+			},
+			"put": {
+				"operationId": "AtualizarStatus",
+				"responses": {
+					"200": {
+						"description": "",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/BasicResponseDto"
+								}
+							}
+						}
+					},
+					"204": {
+						"description": "No content"
+					},
+					"400": {
+						"description": "",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/BasicResponseDto"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"estoque"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "codigo",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/EstoqueDto"
+							}
+						}
+					}
+				}
+			},
+			"delete": {
+				"operationId": "RemoverEstoque",
+				"responses": {
+					"200": {
+						"description": "",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/BasicResponseDto"
+								}
+							}
+						}
+					},
+					"204": {
+						"description": "No content"
+					},
+					"400": {
+						"description": "",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/BasicResponseDto"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"estoque"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "codigo",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				]
+			}
+		},
+		"/estoque/livro_isbn/{livro_isbn}": {
+			"get": {
+				"operationId": "ResumoPorISBN",
+				"responses": {
+					"200": {
+						"description": "",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/BasicResponseDto"
+								}
+							}
+						}
+					},
+					"204": {
+						"description": "No content"
+					},
+					"400": {
+						"description": "",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/BasicResponseDto"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"estoque"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "livro_isbn",
 						"required": true,
 						"schema": {
 							"type": "string"

@@ -5,7 +5,7 @@ export class LivroRepository {
     private static instance: LivroRepository;
   
     constructor() {
-        this.createTable
+        this.createTable();
     }
 
     public static getInstance(): LivroRepository {

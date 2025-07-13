@@ -5,7 +5,7 @@ import { UsuarioDto } from "../model/dto/UsuarioDto";
 import { Usuario } from "../model/entity/Usuario";
 import { UsuarioRequestDto } from "../model/dto/UsuarioRequestDto";
 
-@Route("usuario")
+@Route("usuarios")
 @Tags("Usuario")
 export class UsuarioController{
     private usuarioService = new UsuarioService();
@@ -64,7 +64,7 @@ export class UsuarioController{
             const usuario = await this.usuarioService.atualizarUsuario(cpf, dto);
             const responseDto = new UsuarioDto(
                 usuario.id!,
-                usuario.cpf,
+                usuario.cpf!,
                 usuario.nome,
                 usuario.email,
                 usuario.categoriaId,

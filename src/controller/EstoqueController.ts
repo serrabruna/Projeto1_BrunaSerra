@@ -1,101 +1,102 @@
 import { EstoqueService } from "../service/EstoqueService";
+import { Body, Controller, Delete, Get, Path, Post, Put, Query, Res, Route, Tags, TsoaResponse } from "tsoa";
+import { BasicResponseDto } from "../model/dto/BasicResponseDto";
+import { EstoqueDto } from "../model/dto/EstoqueDto";
+import { EstoqueRequestDto } from "../model/dto/EstoqueRequestDto";
+import { Estoque } from "../model/entity/Estoque";
 import { Request, Response } from "express";
 
+@Route("estoque")
+@Tags("estoque")
 export class EstoqueController{
     private estoqueService = new EstoqueService;
 
-    async adicionarAoEstoque(req: Request, res: Response): Promise<void>{
+    @Post()
+    async adicionarAoEstoque(
+        @Body() dto: EstoqueRequestDto,
+        @Res() fail: TsoaResponse<400, BasicResponseDto>,
+        @Res() success: TsoaResponse<201, BasicResponseDto>
+    ): Promise<void>{
         try{
-            const { livro_isbn, quantidade } = req.body;
-            const estoque = await this.estoqueService.adicionarLivroAoEstoque(livro_isbn, quantidade);
-            res.status(201).json(estoque);
-        }catch(error: unknown){
-            let message: string = "Não foi possível criar o registro";
-            if(error instanceof Error){
-                message = error.message;
-            }
-            res.status(400).json({
-                message: message
-            });
+            const estoque = await this.estoqueService.adicionarLivroAoEstoque(dto.livro_isbn, dto.quantidade);
+            return success(201, new BasicResponseDto("Estoque cadastrado com sucesso!", estoque));
+        }catch(error: any){
+            return fail(400, new BasicResponseDto(error.message, undefined));
         }
     }
 
-    async listarDisponivel(req: Request, res: Response): Promise<void>{
+    @Get("disponiveis")
+    async listarDisponivel(
+        @Res() notFound: TsoaResponse<400, BasicResponseDto>,
+        @Res() success: TsoaResponse<200, BasicResponseDto>
+    ): Promise<void>{
         try{
             const estoque = await this.estoqueService.listarDisponiveis();
-            res.status(201).json(estoque);
+            return success(200, new BasicResponseDto("Estoque listado com sucesso!", estoque));
         }
-        catch(error: unknown){
-            let message: string = "Não foi possível listar o estoque disponível";
-            if(error instanceof Error){
-                message = error.message;
-            }
-            res.status(400).json({
-                message: message
-            });
+        catch(error: any){
+            return notFound(400, new BasicResponseDto(error.message, undefined));
         }
     }
 
-    async buscarExemplar(req: Request, res: Response): Promise<void>{
-        const codigo = parseInt(req.params.codigo);
+    @Get("codigo/{codigo}")
+    async buscarExemplar(
+        @Path() codigo: number,
+        @Res() notFound: TsoaResponse<400, BasicResponseDto>,
+        @Res() success: TsoaResponse<200, BasicResponseDto>
+    ): Promise<void>{
         try{
             const estoque = await this.estoqueService.buscarEstoquePorCodigo(codigo);
-            res.status(201).json(estoque);
+            return success(200, new BasicResponseDto("Estoque encontrado!", estoque));
         }
-        catch(error: unknown){
-            let message: string = "Não foi possível retornar o estoque";
-            if(error instanceof Error){
-                message = error.message;
-            }
-            res.status(400).json({
-                message: message
-            });
+        catch(error: any){
+            return notFound(400, new BasicResponseDto(error.message, undefined));
         }
     }
 
-    async atualizarStatus(req: Request, res: Response): Promise<void>{
-        const codigo = parseInt(req.params.codigo);
-        const { status } = req.body;
+    @Put("codigo/{codigo}")
+    async atualizarStatus(
+        @Path() codigo: number,
+        @Body() dto: EstoqueDto,
+        @Res() notFound: TsoaResponse<400, BasicResponseDto>,
+        @Res() success: TsoaResponse<200, BasicResponseDto>
+    ): Promise<void>{
         try{
-            const estoque = await this.estoqueService.atualizarStatusEstoque(codigo, status);
-            res.status(201).json(estoque);
+            const estoque = await this.estoqueService.atualizarStatusEstoque(codigo, dto.status);
+            return success(200, new BasicResponseDto("Usuário atualizado com sucesso!", estoque));
         }
-        catch(error: unknown){
-            let message: string = "Não foi possível atualizar status do estoque";
-            if(error instanceof Error){
-                message = error.message;
-            }
-            res.status(400).json({
-                message: message
-            });
+        catch(error: any){
+            return notFound(400, new BasicResponseDto(error.message, undefined));
         }
     }
 
-    async resumoPorISBN(req: Request, res: Response): Promise<void> {
+    @Get("livro_isbn/{livro_isbn}")
+    async resumoPorISBN(
+        @Path() livro_isbn: string,
+        @Res() notFound: TsoaResponse<400, BasicResponseDto>,
+        @Res() success: TsoaResponse<200, BasicResponseDto>
+    ): Promise<void> {
         try {
-            const { isbn } = req.params;
-            const resumo = await this.estoqueService.getResumoEstoque(isbn);
-            res.status(200).json(resumo);
+            const resumo = await this.estoqueService.getResumoEstoque(livro_isbn);
+            return success(200, new BasicResponseDto("Resumo encontrado!", resumo));
         } 
         catch (error: any){
-            res.status(404).json({ message: error.message });
+            return notFound(400, new BasicResponseDto(error.message, undefined));
         }
     }
 
-    async RemoverEstoque(req: Request, res: Response): Promise<void>{
-        const codigo = parseInt(req.params.codigo);
+    @Delete("codigo/{codigo}")
+    async RemoverEstoque(
+        @Path() codigo: number,
+        @Res() notFound: TsoaResponse<400, BasicResponseDto>,
+        @Res() success: TsoaResponse<200, BasicResponseDto>
+    ): Promise<void>{
         try{
             const estoque = await this.estoqueService.removerRegistroEstoque(codigo);
-            res.status(204).send();
+            return success(200, new BasicResponseDto("Estoque deletado com sucesso!", estoque));
         }
-        catch(error: unknown){
-            let message: string = "Não foi possível remover estoque";
-            if(error instanceof Error){
-                message = error.message;
-            }
-            res.status(400).json({
-                message: message
-            });
+        catch(error: any){
+            return notFound(400, new BasicResponseDto(error.message, undefined));
         }
     }
 }

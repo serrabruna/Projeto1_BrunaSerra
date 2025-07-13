@@ -7,6 +7,8 @@ const UsuarioController_1 = require("./../controller/UsuarioController");
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 const LivroController_1 = require("./../controller/LivroController");
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+const EstoqueController_1 = require("./../controller/EstoqueController");
+// WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 const CursoController_1 = require("./../controller/CursoController");
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 const CategoriaUsuarioController_1 = require("./../controller/CategoriaUsuarioController");
@@ -17,7 +19,6 @@ const models = {
     "UsuarioRequestDto": {
         "dataType": "refObject",
         "properties": {
-            "cpf": { "dataType": "string" },
             "nome": { "dataType": "string" },
             "email": { "dataType": "string" },
             "categoriaId": { "dataType": "double" },
@@ -44,6 +45,30 @@ const models = {
             "editora": { "dataType": "string" },
             "edicao": { "dataType": "string" },
             "categoriaId": { "dataType": "double" },
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "EstoqueRequestDto": {
+        "dataType": "refObject",
+        "properties": {
+            "codigo": { "dataType": "double", "required": true },
+            "livro_isbn": { "dataType": "string", "required": true },
+            "quantidade": { "dataType": "double" },
+            "quantidade_emprestada": { "dataType": "double" },
+            "status": { "dataType": "union", "subSchemas": [{ "dataType": "enum", "enums": ["disponivel"] }, { "dataType": "enum", "enums": ["emprestado"] }] },
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "EstoqueDto": {
+        "dataType": "refObject",
+        "properties": {
+            "codigo": { "dataType": "double", "required": true },
+            "livro_isbn": { "dataType": "string", "required": true },
+            "quantidade": { "dataType": "double", "required": true },
+            "quantidade_emprestada": { "dataType": "double", "required": true },
+            "status": { "dataType": "union", "subSchemas": [{ "dataType": "enum", "enums": ["disponivel"] }, { "dataType": "enum", "enums": ["emprestado"] }], "required": true },
         },
         "additionalProperties": false,
     },
@@ -85,7 +110,7 @@ function RegisterRoutes(app) {
         fail: { "in": "res", "name": "400", "required": true, "ref": "BasicResponseDto" },
         success: { "in": "res", "name": "201", "required": true, "ref": "BasicResponseDto" },
     };
-    app.post('/usuario', ...((0, runtime_1.fetchMiddlewares)(UsuarioController_1.UsuarioController)), ...((0, runtime_1.fetchMiddlewares)(UsuarioController_1.UsuarioController.prototype.criarUsuario)), async function UsuarioController_criarUsuario(request, response, next) {
+    app.post('/usuarios', ...((0, runtime_1.fetchMiddlewares)(UsuarioController_1.UsuarioController)), ...((0, runtime_1.fetchMiddlewares)(UsuarioController_1.UsuarioController.prototype.criarUsuario)), async function UsuarioController_criarUsuario(request, response, next) {
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         let validatedArgs = [];
         try {
@@ -109,7 +134,7 @@ function RegisterRoutes(app) {
         notFound: { "in": "res", "name": "400", "required": true, "ref": "BasicResponseDto" },
         success: { "in": "res", "name": "200", "required": true, "ref": "BasicResponseDto" },
     };
-    app.get('/usuario/all', ...((0, runtime_1.fetchMiddlewares)(UsuarioController_1.UsuarioController)), ...((0, runtime_1.fetchMiddlewares)(UsuarioController_1.UsuarioController.prototype.listarUsuario)), async function UsuarioController_listarUsuario(request, response, next) {
+    app.get('/usuarios/all', ...((0, runtime_1.fetchMiddlewares)(UsuarioController_1.UsuarioController)), ...((0, runtime_1.fetchMiddlewares)(UsuarioController_1.UsuarioController.prototype.listarUsuario)), async function UsuarioController_listarUsuario(request, response, next) {
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         let validatedArgs = [];
         try {
@@ -134,7 +159,7 @@ function RegisterRoutes(app) {
         notFound: { "in": "res", "name": "400", "required": true, "ref": "BasicResponseDto" },
         success: { "in": "res", "name": "200", "required": true, "ref": "BasicResponseDto" },
     };
-    app.get('/usuario/cpf/:cpf', ...((0, runtime_1.fetchMiddlewares)(UsuarioController_1.UsuarioController)), ...((0, runtime_1.fetchMiddlewares)(UsuarioController_1.UsuarioController.prototype.buscarUsuario)), async function UsuarioController_buscarUsuario(request, response, next) {
+    app.get('/usuarios/cpf/:cpf', ...((0, runtime_1.fetchMiddlewares)(UsuarioController_1.UsuarioController)), ...((0, runtime_1.fetchMiddlewares)(UsuarioController_1.UsuarioController.prototype.buscarUsuario)), async function UsuarioController_buscarUsuario(request, response, next) {
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         let validatedArgs = [];
         try {
@@ -160,7 +185,7 @@ function RegisterRoutes(app) {
         notFound: { "in": "res", "name": "400", "required": true, "ref": "BasicResponseDto" },
         success: { "in": "res", "name": "200", "required": true, "ref": "BasicResponseDto" },
     };
-    app.put('/usuario/cpf/:cpf', ...((0, runtime_1.fetchMiddlewares)(UsuarioController_1.UsuarioController)), ...((0, runtime_1.fetchMiddlewares)(UsuarioController_1.UsuarioController.prototype.atualizarUsuario)), async function UsuarioController_atualizarUsuario(request, response, next) {
+    app.put('/usuarios/cpf/:cpf', ...((0, runtime_1.fetchMiddlewares)(UsuarioController_1.UsuarioController)), ...((0, runtime_1.fetchMiddlewares)(UsuarioController_1.UsuarioController.prototype.atualizarUsuario)), async function UsuarioController_atualizarUsuario(request, response, next) {
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         let validatedArgs = [];
         try {
@@ -185,7 +210,7 @@ function RegisterRoutes(app) {
         notFound: { "in": "res", "name": "400", "required": true, "ref": "BasicResponseDto" },
         success: { "in": "res", "name": "200", "required": true, "ref": "BasicResponseDto" },
     };
-    app.delete('/usuario/cpf/:cpf', ...((0, runtime_1.fetchMiddlewares)(UsuarioController_1.UsuarioController)), ...((0, runtime_1.fetchMiddlewares)(UsuarioController_1.UsuarioController.prototype.removerUsuario)), async function UsuarioController_removerUsuario(request, response, next) {
+    app.delete('/usuarios/cpf/:cpf', ...((0, runtime_1.fetchMiddlewares)(UsuarioController_1.UsuarioController)), ...((0, runtime_1.fetchMiddlewares)(UsuarioController_1.UsuarioController.prototype.removerUsuario)), async function UsuarioController_removerUsuario(request, response, next) {
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         let validatedArgs = [];
         try {
@@ -319,6 +344,156 @@ function RegisterRoutes(app) {
             const controller = new LivroController_1.LivroController();
             await templateService.apiHandler({
                 methodName: 'removerLivro',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: undefined,
+            });
+        }
+        catch (err) {
+            return next(err);
+        }
+    });
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    const argsEstoqueController_adicionarAoEstoque = {
+        dto: { "in": "body", "name": "dto", "required": true, "ref": "EstoqueRequestDto" },
+        fail: { "in": "res", "name": "400", "required": true, "ref": "BasicResponseDto" },
+        success: { "in": "res", "name": "201", "required": true, "ref": "BasicResponseDto" },
+    };
+    app.post('/estoque', ...((0, runtime_1.fetchMiddlewares)(EstoqueController_1.EstoqueController)), ...((0, runtime_1.fetchMiddlewares)(EstoqueController_1.EstoqueController.prototype.adicionarAoEstoque)), async function EstoqueController_adicionarAoEstoque(request, response, next) {
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        let validatedArgs = [];
+        try {
+            validatedArgs = templateService.getValidatedArgs({ args: argsEstoqueController_adicionarAoEstoque, request, response });
+            const controller = new EstoqueController_1.EstoqueController();
+            await templateService.apiHandler({
+                methodName: 'adicionarAoEstoque',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: undefined,
+            });
+        }
+        catch (err) {
+            return next(err);
+        }
+    });
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    const argsEstoqueController_listarDisponivel = {
+        notFound: { "in": "res", "name": "400", "required": true, "ref": "BasicResponseDto" },
+        success: { "in": "res", "name": "200", "required": true, "ref": "BasicResponseDto" },
+    };
+    app.get('/estoque/disponiveis', ...((0, runtime_1.fetchMiddlewares)(EstoqueController_1.EstoqueController)), ...((0, runtime_1.fetchMiddlewares)(EstoqueController_1.EstoqueController.prototype.listarDisponivel)), async function EstoqueController_listarDisponivel(request, response, next) {
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        let validatedArgs = [];
+        try {
+            validatedArgs = templateService.getValidatedArgs({ args: argsEstoqueController_listarDisponivel, request, response });
+            const controller = new EstoqueController_1.EstoqueController();
+            await templateService.apiHandler({
+                methodName: 'listarDisponivel',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: undefined,
+            });
+        }
+        catch (err) {
+            return next(err);
+        }
+    });
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    const argsEstoqueController_buscarExemplar = {
+        codigo: { "in": "path", "name": "codigo", "required": true, "dataType": "double" },
+        notFound: { "in": "res", "name": "400", "required": true, "ref": "BasicResponseDto" },
+        success: { "in": "res", "name": "200", "required": true, "ref": "BasicResponseDto" },
+    };
+    app.get('/estoque/codigo/:codigo', ...((0, runtime_1.fetchMiddlewares)(EstoqueController_1.EstoqueController)), ...((0, runtime_1.fetchMiddlewares)(EstoqueController_1.EstoqueController.prototype.buscarExemplar)), async function EstoqueController_buscarExemplar(request, response, next) {
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        let validatedArgs = [];
+        try {
+            validatedArgs = templateService.getValidatedArgs({ args: argsEstoqueController_buscarExemplar, request, response });
+            const controller = new EstoqueController_1.EstoqueController();
+            await templateService.apiHandler({
+                methodName: 'buscarExemplar',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: undefined,
+            });
+        }
+        catch (err) {
+            return next(err);
+        }
+    });
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    const argsEstoqueController_atualizarStatus = {
+        codigo: { "in": "path", "name": "codigo", "required": true, "dataType": "double" },
+        dto: { "in": "body", "name": "dto", "required": true, "ref": "EstoqueDto" },
+        notFound: { "in": "res", "name": "400", "required": true, "ref": "BasicResponseDto" },
+        success: { "in": "res", "name": "200", "required": true, "ref": "BasicResponseDto" },
+    };
+    app.put('/estoque/codigo/:codigo', ...((0, runtime_1.fetchMiddlewares)(EstoqueController_1.EstoqueController)), ...((0, runtime_1.fetchMiddlewares)(EstoqueController_1.EstoqueController.prototype.atualizarStatus)), async function EstoqueController_atualizarStatus(request, response, next) {
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        let validatedArgs = [];
+        try {
+            validatedArgs = templateService.getValidatedArgs({ args: argsEstoqueController_atualizarStatus, request, response });
+            const controller = new EstoqueController_1.EstoqueController();
+            await templateService.apiHandler({
+                methodName: 'atualizarStatus',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: undefined,
+            });
+        }
+        catch (err) {
+            return next(err);
+        }
+    });
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    const argsEstoqueController_resumoPorISBN = {
+        livro_isbn: { "in": "path", "name": "livro_isbn", "required": true, "dataType": "string" },
+        notFound: { "in": "res", "name": "400", "required": true, "ref": "BasicResponseDto" },
+        success: { "in": "res", "name": "200", "required": true, "ref": "BasicResponseDto" },
+    };
+    app.get('/estoque/livro_isbn/:livro_isbn', ...((0, runtime_1.fetchMiddlewares)(EstoqueController_1.EstoqueController)), ...((0, runtime_1.fetchMiddlewares)(EstoqueController_1.EstoqueController.prototype.resumoPorISBN)), async function EstoqueController_resumoPorISBN(request, response, next) {
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        let validatedArgs = [];
+        try {
+            validatedArgs = templateService.getValidatedArgs({ args: argsEstoqueController_resumoPorISBN, request, response });
+            const controller = new EstoqueController_1.EstoqueController();
+            await templateService.apiHandler({
+                methodName: 'resumoPorISBN',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: undefined,
+            });
+        }
+        catch (err) {
+            return next(err);
+        }
+    });
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    const argsEstoqueController_RemoverEstoque = {
+        codigo: { "in": "path", "name": "codigo", "required": true, "dataType": "double" },
+        notFound: { "in": "res", "name": "400", "required": true, "ref": "BasicResponseDto" },
+        success: { "in": "res", "name": "200", "required": true, "ref": "BasicResponseDto" },
+    };
+    app.delete('/estoque/codigo/:codigo', ...((0, runtime_1.fetchMiddlewares)(EstoqueController_1.EstoqueController)), ...((0, runtime_1.fetchMiddlewares)(EstoqueController_1.EstoqueController.prototype.RemoverEstoque)), async function EstoqueController_RemoverEstoque(request, response, next) {
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        let validatedArgs = [];
+        try {
+            validatedArgs = templateService.getValidatedArgs({ args: argsEstoqueController_RemoverEstoque, request, response });
+            const controller = new EstoqueController_1.EstoqueController();
+            await templateService.apiHandler({
+                methodName: 'RemoverEstoque',
                 controller,
                 response,
                 next,
