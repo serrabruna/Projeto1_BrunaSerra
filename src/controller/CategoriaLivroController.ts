@@ -1,55 +1,53 @@
 import { CategoriaLivroService } from "../service/CategoriaLivroService";
-import { Request, Response } from "express";
+import { Body, Controller, Delete, Get, Path, Post, Put, Query, Res, Route, Tags, TsoaResponse } from "tsoa";
+import { BasicResponseDto } from "../model/dto/BasicResponseDto";
+import { CategoriaLivroRequestDto } from "../model/dto/CategoriaLivroRequestDto";
 
+@Route("categorias-livro")
+@Tags("categoria-livro")
 export class CategoriaLivroController{
     private categoriaLivroService = new CategoriaLivroService();
 
-    async criarCategoriaLivro(req: Request, res: Response): Promise <void>{
+    @Post()
+    async criarCategoriaLivro(
+        @Body() dto: CategoriaLivroRequestDto,
+        @Res() fail: TsoaResponse<400, BasicResponseDto>,
+        @Res() success: TsoaResponse<201, BasicResponseDto>
+    ): Promise <void>{
         try{
-            const { nome } = req.body; 
-            const catLivro = await this.categoriaLivroService.cadastrarCategoria(nome);
-            res.status(201).json(catLivro);
-        }catch(error: unknown){
-            let message: string = "Não foi possível criar o registro";
-            if(error instanceof Error){
-                message = error.message;4
-            }
-            res.status(400).json({
-                message: message
-            });
+            const catLivro = await this.categoriaLivroService.cadastrarCategoria(dto.nome);
+            return success(201, new BasicResponseDto("Categoria de livro cadastrada com sucesso!", catLivro));
+        }catch(error: any){
+            return fail(400, new BasicResponseDto(error.message, undefined));
         }
     }
 
-    async listarCategorias(req: Request, res: Response): Promise<void>{
+    @Get("all")
+    async listarCategorias(
+        @Res() notFound: TsoaResponse<400, BasicResponseDto>,
+        @Res() success: TsoaResponse<200, BasicResponseDto>
+    ): Promise<void>{
         try{
             const categoria = await this.categoriaLivroService.listarCategorias();
-            res.status(201).json(categoria);
+            return success(200, new BasicResponseDto("Categorias de livro listadas com sucesso!", categoria));
         }
-        catch(error: unknown){
-            let message: string = "Não foi possível listar as categorias";
-            if(error instanceof Error){
-                message = error.message;
-            }
-            res.status(400).json({
-                message: message
-            });
+        catch(error: any){
+            return notFound(400, new BasicResponseDto(error.message, undefined));
         }
     }
 
-    async deletarCategoria(req: Request, res: Response): Promise<void>{
-        const id = parseInt(req.params.id);
+    @Delete("id/{id}")
+    async deletarCategoria(
+        @Path() id: number,
+        @Res() notFound: TsoaResponse<400, BasicResponseDto>,
+        @Res() success: TsoaResponse<200, BasicResponseDto>
+    ): Promise<void>{
         try{
             const categoria = await this.categoriaLivroService.deletarCategoria(id);
-            res.status(204).send();
+            return success(200, new BasicResponseDto("Categoria de usuário deletada com sucesso!", categoria));
         }
-        catch(error: unknown){
-            let message: string = "Não foi possível remover categoria";
-            if(error instanceof Error){
-                message = error.message;
-            }
-            res.status(400).json({
-                message: message
-            });
+        catch(error: any){
+            return notFound(400, new BasicResponseDto(error.message, undefined));
         }
     }
 }

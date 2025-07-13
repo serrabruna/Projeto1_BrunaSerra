@@ -1,55 +1,53 @@
 import { CursoService } from "../service/CursoService";
-import { Request, Response } from "express";
+import { Body, Controller, Delete, Get, Path, Post, Put, Query, Res, Route, Tags, TsoaResponse } from "tsoa";
+import { BasicResponseDto } from "../model/dto/BasicResponseDto";
+import { CursoRequestDto } from "../model/dto/CursoRequestDto";
 
+@Route("cursos")
+@Tags("curso")
 export class CursoController{
     private cursoService = new CursoService();
 
-    async criarCurso(req: Request, res: Response): Promise <void>{
+    @Post()
+    async criarCurso(
+        @Body() dto: CursoRequestDto,
+        @Res() fail: TsoaResponse<400, BasicResponseDto>,
+        @Res() success: TsoaResponse<201, BasicResponseDto>
+    ): Promise <void>{
         try{
-            const { nome } = req.body; 
-            const curso = await this.cursoService.cadastrarCurso(nome);
-            res.status(201).json(curso);
-        }catch(error: unknown){
-            let message: string = "Não foi possível criar o registro";
-            if(error instanceof Error){
-                message = error.message;4
-            }
-            res.status(400).json({
-                message: message
-            });
+            const curso = await this.cursoService.cadastrarCurso(dto.nome);
+            return success(201, new BasicResponseDto("Curso cadastrado com sucesso!", curso));
+        }catch(error: any){
+            return fail(400, new BasicResponseDto(error.message, undefined));
         }
     }
 
-    async listarCursos(req: Request, res: Response): Promise<void>{
+    @Get("all")
+    async listarCursos(
+        @Res() notFound: TsoaResponse<400, BasicResponseDto>,
+        @Res() success: TsoaResponse<200, BasicResponseDto>
+    ): Promise<void>{
         try{
             const curso = await this.cursoService.listarCursos();
-            res.status(201).json(curso);
+            return success(200, new BasicResponseDto("Cursos listados com sucesso!", curso));
         }
-        catch(error: unknown){
-            let message: string = "Não foi possível listar os cursos";
-            if(error instanceof Error){
-                message = error.message;
-            }
-            res.status(400).json({
-                message: message
-            });
+        catch(error: any){
+            return notFound(400, new BasicResponseDto(error.message, undefined));
         }
     }
 
-    async deletarCategoria(req: Request, res: Response): Promise<void>{
-        const id = parseInt(req.params.id);
+    @Delete("id/{id}")
+    async deletarCategoria(
+        @Path() id: number,
+        @Res() notFound: TsoaResponse<400, BasicResponseDto>,
+        @Res() success: TsoaResponse<200, BasicResponseDto>
+    ): Promise<void>{
         try{
             const curso = await this.cursoService.deletarCurso(id);
-            res.status(204).send();
+            return success(200, new BasicResponseDto("Curso deletado com sucesso!", curso));
         }
-        catch(error: unknown){
-            let message: string = "Não foi possível remover curso";
-            if(error instanceof Error){
-                message = error.message;
-            }
-            res.status(400).json({
-                message: message
-            });
+        catch(error: any){
+            return notFound(400, new BasicResponseDto(error.message, undefined));
         }
     }
 
