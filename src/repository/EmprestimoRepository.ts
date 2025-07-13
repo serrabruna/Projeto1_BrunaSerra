@@ -4,7 +4,7 @@ import { executarComandoSQL } from "../database/mysql";
 export class EmprestimoRepository {
     private static instance: EmprestimoRepository;
 
-    constructor() {
+    private constructor() {
         this.createTable();
     }
 
@@ -15,7 +15,7 @@ export class EmprestimoRepository {
         return this.instance;
     }
 
-    async createTable(): Promise<void> {
+    private async createTable(): Promise<void> {
         const query = `CREATE TABLE IF NOT EXISTS biblioteca.Emprestimo (
                 id INT AUTO_INCREMENT PRIMARY KEY,
                 cpfUsuario VARCHAR(11) NOT NULL,

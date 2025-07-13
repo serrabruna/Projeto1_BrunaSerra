@@ -4,7 +4,7 @@ import { executarComandoSQL } from "../database/mysql";
 export class UsuarioRepository {
     private static instance: UsuarioRepository;
 
-    constructor() {
+    private constructor() {
         this.createTable();
     }
 
@@ -15,7 +15,7 @@ export class UsuarioRepository {
         return this.instance;
     }
 
-    async createTable() {
+    private async createTable() {
         const query = ` CREATE TABLE IF NOT EXISTS biblioteca.Usuario (
                 id INT AUTO_INCREMENT PRIMARY KEY,
                 cpf VARCHAR(11) NOT NULL UNIQUE,

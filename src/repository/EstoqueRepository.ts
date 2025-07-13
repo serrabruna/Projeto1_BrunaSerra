@@ -4,7 +4,7 @@ import { executarComandoSQL } from "../database/mysql";
 export class EstoqueRepository {
     private static instance: EstoqueRepository;
 
-    constructor() {
+    private constructor() {
         this.createTable();
     }
 
@@ -15,7 +15,7 @@ export class EstoqueRepository {
     return this.instance;
     }
 
-    async createTable(): Promise<void> {
+    private async createTable(): Promise<void> {
         const query = `
             CREATE TABLE IF NOT EXISTS biblioteca.Estoque (
                 codigo INT AUTO_INCREMENT PRIMARY KEY,

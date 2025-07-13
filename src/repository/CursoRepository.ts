@@ -4,7 +4,7 @@ import { executarComandoSQL } from "../database/mysql";
 export class CursoRepository{
     private static instance: CursoRepository;
 
-    constructor(){
+    private constructor(){
         this.createTable();
     }
 
@@ -15,7 +15,7 @@ export class CursoRepository{
         return this.instance;
     }
 
-    async createTable(){
+    private async createTable(){
         const query = ` CREATE TABLE IF NOT EXISTS biblioteca.Curso (
             id INT PRIMARY KEY AUTO_INCREMENT,
             nome VARCHAR(255) NOT NULL UNIQUE
